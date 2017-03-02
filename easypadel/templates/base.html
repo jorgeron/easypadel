@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block pagetitle %}{% endblock %}</title>
+        {% load staticfiles %}
+        {% load bootstrap3 %}
+        {% load static %}
+
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" >
+        <link rel="stylesheet" href="{% static "css/style.css" %}" >
+        <script type="text/javascript" src="{% static "jquery/jquery-3.1.1.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+        <!-- FALTAN ENLACES A JS, JQUERY. MIRAR BASE.HTML DE EXTREMEBID. CREO QUE HAY Q DESCARGAR JQUERY -->
+        <!-- RECOMENDABLE PONER URLS CDM POR SI FALLAN LAS RUTAS A LOS ARCHIVOS EN LOCAL -->
+        
+        <!-- <link rel="stylesheet" href="{% static "css/login.css" %}">
+        <script type="text/javascript" src="{% static "js/login.js" %}"></script> -->
+
+        
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+        {% include "navbar.html" %}
+
+
+        {% block noheader %}
+        <header>
+            <div class="header-content">
+                {% block pageheaderinner %}
+                <div class="header-content-inner {%block pageheaderprop%}{%endblock%}">
+                    {% block pageheader %}{% endblock %}
+                </div>
+                {% endblock %}
+            </div>
+        </header>
+        {% endblock %}
+
+        {% block pagespecial %}
+        <section class="bg-main">
+            <div class="container bg-main-container">
+                {% block pagebody %}{% endblock %}
+                {% block content%}{%endblock%}
+            </div>
+        </section>
+        {% endblock %}
+
+        {% include "footer.html" %}
+
+
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>

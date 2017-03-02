@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block pagetitle %}Registro completo{% endblock %}
+{% block pageheader %}<h1>Gracias por registrarte!</h1>{% endblock %}
+
+{% block pagebody %}
+<h3>Registro completo</h3>
+{% if type == "0" %}
+<p>Ahora puedes entrar en el sistema</p>
+{% elif type == "1"%}
+<p>Su cuenta está siendo creada, pero se tiene que activar por un miembro de nuestra empresa. Este proceso puede durar un máximo de 48 horas.</p>
+{% endif%}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %} 
+{% load bootstrap3 %}
+
+
+
+{% block pagetitle %} Timeline | easyPadel {% endblock %}
+{% block pageheaderprop %} hidden-xs {% endblock %}
+{% block pageheader %}
+	<h1>Login correcto!</h1>
+{% endblock %}
+
+{% block pagebody %}
+
+	    <div class="jumbotron">
+		  <h1>Gracias por entrar en easyPadel</h1>
+		  <p>Su login se ha realizado de manera correcta.</p>
+		  <p><a class="btn btn-danger btn-lg" href="/logout" role="button">{% bootstrap_icon "log-out" %} Log out</a></p>
+		</div>
+
+{% endblock %}

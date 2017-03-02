@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %} 
+{% load bootstrap3 %}
+
+
+
+{% block pagetitle %} Login | easyPadel {% endblock %}
+{% block pageheaderprop %} hidden-xs {% endblock %}
+{% block pageheader %}
+	<h1>Bienvenido a easyPadel!</h1>
+{% endblock %}
+
+{% block pagebody %}
+
+
+
+	    <form id='form' method='post' action=''>
+			{% csrf_token %}
+			{% bootstrap_form form %}
+			<p class="message">Not registered? <a href="/jugador/registration">Create an account</a></p>
+			{% buttons %}
+			<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "log-in" %}
+			Login
+			</button>
+			{% endbuttons %}
+		</form>
+
+{% endblock %}

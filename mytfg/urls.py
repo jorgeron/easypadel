@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-
+import easypadel.views
 
 urlpatterns = [
-	url(r'^easypadel/', include('easypadel.urls')),
+	url(r'^$', easypadel.views.home, name='index'),
+	url(r'^logout/$', easypadel.views.appLogout, name='logout'),
+	url(r'^jugador/registration/$', easypadel.views.registroJugador, name='registroJugador'),
+	url(r'^registroCompleto/(?P<rtype>\d+)$', easypadel.views.registroCompleto, name='registroCompleto'),
     url(r'^admin/', admin.site.urls),
 ]

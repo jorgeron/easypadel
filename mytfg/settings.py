@@ -25,6 +25,9 @@ SECRET_KEY = 'ass%t%l0(_85_-x-4e7&7435jt)tk*bwx2@+c*v$=85y2o5$*z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+LOGIN_REDIRECT_URL = "/404.html"
+LOGIN_URL = "/404.html"
+
 ALLOWED_HOSTS = []
 
 
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
 ]
 
 MIDDLEWARE = [
@@ -108,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ES'
 
 TIME_ZONE = 'Europe/Madrid'
 

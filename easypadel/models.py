@@ -11,7 +11,8 @@ class Actor(models.Model):
     # or with default values
     foto_perfil = models.ImageField(null=True, blank=True, upload_to='profile_pics/%Y-%m-%d/', verbose_name=_('Foto de perfil'))
     foto_cabecera = models.ImageField(null=True, blank=True, upload_to='header_pics/%Y-%m-%d/', verbose_name=_('Foto de cabecera'))
-    #email = models.EmailField(verbose_name=_("Email"))
+    email = models.EmailField(verbose_name=_("Email"), null=True)
+    #UNIQUE EMAIL ??
     telefono_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=_("El teléfono debe tener el siguiente formato: '+999999999'. Permitidos hasta 15 dígitos."))
     telefono = models.CharField(validators=[telefono_regex], blank=True, max_length=15,verbose_name=_("Teléfono")) # validators should be a list   
     descripcion = models.TextField(max_length=500, blank=True, null= True)

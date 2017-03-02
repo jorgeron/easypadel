@@ -1,3 +1,4 @@
+
 li a {
     color: green;
 }
@@ -5,4 +6,40 @@ li a {
 .thelogo2 {
   background-color: rgba(255,0,0,0.5);
   border-radius: 8px;
+}
+
+header .header-content {
+  position: relative;
+  text-align: center;
+  padding: 50px 15px 0px;
+  width: 100%;
+}
+header .header-content .header-content-inner {
+  padding: 20px 0px 20px;
+}
+header .header-content .header-content-inner h1 {
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+header .header-content .header-content-inner hr {
+  margin: 30px auto;
+}
+header .header-content .header-content-inner p {
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+}
+@media (min-width: 768px) {
+  header .header-content .header-content-inner {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header .header-content .header-content-inner p {
+    font-size: 18px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
