@@ -8,9 +8,11 @@
 {% block pagebody %}
 <h3>Registro completo</h3>
 {% if type == "0" %}
-<p>Ahora puedes entrar en el sistema</p>
+<p>Ahora puedes entrar en el sistema como Jugador</p>
 {% elif type == "1"%}
-<p>Su cuenta está siendo creada, pero se tiene que activar por un miembro de nuestra empresa. Este proceso puede durar un máximo de 48 horas.</p>
+<p>Se ha registrado con éxtito un nuevo administrador</p>
+{% elif type == "2"%}
+<p>Se ha registrado con éxtito una nueva empresa</p>
 {% endif%}
 
 {% endblock %}

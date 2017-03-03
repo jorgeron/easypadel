@@ -2,6 +2,11 @@
 {% load bootstrap3 %}
 {% load static %}
 
+{% block head %}
+{% if formJugador %}{{ formJugador.media }}{% endif %}
+{% if formAdmin %}{{ formAdmin.media }}{% endif %}
+{% endblock %}
+
 {% block pagetitle %} Registro {{role}} {% endblock %}
 {% block pageheader %}
 	<h1>Registro {{role}}</h1>
@@ -12,6 +17,14 @@
 
 		{% if formJugador %}
 		{% bootstrap_form formJugador %}
+		{% endif %}
+
+		{% if formAdmin %}
+		{% bootstrap_form formAdmin %}
+		{% endif %}
+
+		{% if formEmpresa %}
+		{% bootstrap_form formEmpresa %}
 		{% endif %}
 
 		{% buttons %}

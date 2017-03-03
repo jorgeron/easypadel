@@ -1,0 +1,5 @@
+django
+django-bootstrap3
+Pillow
+django-datetime-widget
+easy_thumbnails

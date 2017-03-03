@@ -23,6 +23,12 @@ class Actor(models.Model):
     class Meta:
         abstract = True
 
+class Administrador(Actor):
+	class Meta:
+		verbose_name= _('Administrador')
+		verbose_name_plural = _('Administradores')
+	def __unicode__(self):
+		return self.nombre
 
 class Jugador(Actor):
 	SEXOS = (

@@ -12,12 +12,10 @@
 
 {% block pagebody %}
 
-
-
 	    <form id='form' method='post' action=''>
 			{% csrf_token %}
 			{% bootstrap_form form %}
-			<p class="message">Not registered? <a href="/jugador/registration">Create an account</a></p>
+			<p class="message">¿No estás registrado? <a href="/jugador/registration">Créate una cuenta aquí!</a></p>
 			{% buttons %}
 			<button type="submit" class="btn btn-primary">
 			{% bootstrap_icon "log-in" %}

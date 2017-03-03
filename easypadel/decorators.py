@@ -16,3 +16,13 @@ class AnonymousRequired( object ):
         if request.user is not None and request.user.is_authenticated():
             return HttpResponseRedirect( self.redirect_to ) 
         return self.view_function( request, *args, **kwargs )
+
+
+def admin_group(user):
+    return user.is_authenticated() and user.groups.filter(name='Administrators').exists()
+
+def jugadores_group(user):
+    return user.is_authenticated() and user.groups.filter(name='Jugadores').exists()
+
+def empresas_group(user):
+    return user.is_authenticated() and user.groups.filter(name='Empresas').exists()
