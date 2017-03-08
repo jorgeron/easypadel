@@ -87,7 +87,7 @@ class Pista(models.Model):
 	tipo_pared = models.CharField(max_length=20, choices=TIPOS_PARED, default='METACRILATO')
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)
-	foto = models.ImageField(null=True, blank=True, upload_to='static/images/pistas/', verbose_name=_('Foto de pista'))
+	foto = models.ImageField(null=True, blank=True, upload_to='images/pistas/%Y-%m-%d/', verbose_name=_('Foto de pista'))
 	
 	def __str__(self):
 		return self.nombre

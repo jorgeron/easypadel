@@ -12,9 +12,9 @@
 		<div class="panel-body">
 			<div class="media">
 				<div class="media-left">
-
-					<a href="/#">
-					</a>
+					<a href="{% url 'viewPista' pista.id %}">
+								<img class="media-object img-rounded" src="{%thumbnail pista.foto|default:'no-image.png' 48x48 crop %}" alt="{{pista.name}}">
+							</a>
 				</div>
 
 

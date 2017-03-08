@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
+from mytfg import settings
 import easypadel.views
 
 urlpatterns = [
@@ -36,4 +38,4 @@ urlpatterns = [
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),
 
     url(r'^admin/', admin.site.urls),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
