@@ -127,15 +127,33 @@ def deleteUser(request):
     return appLogout(request)
 
 
-
+@login_required
 def listPistas(request):
     pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
     return render(request, 'listPistas.html', {'list':pistas})
 
+@login_required
 def viewPista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
-    return render(request, 'viewPista.html', {'pista':pista})
+    editable = (request.user == pista.empresa.user)
+    return render(request, 'viewPista.html', {'pista':pista, 'editable':editable})
 
+def auxPistaForm(instance, *args):
+    return PistaForm(instance = instance, *args)
+
+@user_passes_test(empresas_group)
+def editPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    if request.method=='POST':
+        form = auxPistaForm(pista, request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+    else:
+        form = PistaForm(instance = pista)
+    return render(request, 'form.html', {'form':form, 'pista':pista,'class':_('Pista'), 'operation':_('Editar')})
+
+@user_passes_test(empresas_group)
 def deletePista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
     pista.delete()
@@ -144,7 +162,7 @@ def deletePista(request, pista_id):
 @user_passes_test(empresas_group)
 def createPista(request):
     if request.method=='POST':
-        form = PistaForm(request.POST)
+        form = PistaForm(request.POST, request.FILES)
         if form.is_valid():               
             new_pista = form.save(commit=False)
             new_pista.empresa_id = (Empresa.objects.get(user=request.user)).id
@@ -152,4 +170,4 @@ def createPista(request):
             return HttpResponseRedirect(reverse('listPistas'))
     else:
         form = PistaForm()
-    return render(request, 'form.html', {'form':form, 'class':_('Pista')})
+    return render(request, 'form.html', {'form':form, 'class':_('Pista'), 'operation':_('Crear')})

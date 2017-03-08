@@ -12,29 +12,32 @@
 <h1>{{pista.nombre}}</h1>
 
 
-{% if pista.empresa.user == user %}
+{% if editable %}
   <div class="profile-content pull-right">
-    <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
 
-    <div class="modal fade" id="delete-pista">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">¿Está seguro?</h4>
-                </div>
-                <div class="modal-body">
-                    <h5>¿Está seguro de querer borrar esta pista?</h5>
-                </div>
-                <div class="modal-footer">
-                   
-                        <a href="{% url 'deletePista' pista.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
+  <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "edit" %} Editar pista</a>
+
+  <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
+
+  <div class="modal fade" id="delete-pista">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title">¿Está seguro?</h4>
+              </div>
+              <div class="modal-body">
+                  <h5>¿Está seguro de querer borrar esta pista?</h5>
+              </div>
+              <div class="modal-footer">
+                 
+                      <a href="{% url 'deletePista' pista.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                  
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 {% endif %}
 
