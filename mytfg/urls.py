@@ -20,9 +20,20 @@ import easypadel.views
 urlpatterns = [
 	url(r'^$', easypadel.views.home, name='index'),
 	url(r'^logout/$', easypadel.views.appLogout, name='logout'),
+
+    url(r'^user/delete$', easypadel.views.deleteUser, name='deleteUser'),
+
 	url(r'^jugador/registration/$', easypadel.views.registroJugador, name='registroJugador'),
     url(r'^administrador/registration/$', easypadel.views.registroAdministrador, name='registroAdministrador'),
     url(r'^empresa/registration/$', easypadel.views.registroEmpresa, name='registroEmpresa'),
 	url(r'^registroCompleto/(?P<rtype>\d+)$', easypadel.views.registroCompleto, name='registroCompleto'),
+
+    url(r'^empresa/pistas/list$', easypadel.views.listPistas, name='listPistas'),
+    url(r'^empresa/pistas/create$', easypadel.views.createPista, name='createPista'),
+    #url(r'^empresa/pistas/edit$', easypadel.views.editPista, name='editPista'),
+    url(r'^empresa/pistas/delete/(?P<pista_id>[0-9]+)/$', easypadel.views.deletePista, name='deletePista'),
+
+    url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),
+
     url(r'^admin/', admin.site.urls),
 ]

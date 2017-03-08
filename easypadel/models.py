@@ -9,8 +9,8 @@ class Actor(models.Model):
     nombre = models.CharField(max_length=100, verbose_name=_("Nombre"))
     # Add more user profile fields here. Make sure they are nullable
     # or with default values
-    foto_perfil = models.ImageField(null=True, blank=True, upload_to='profile_pics/%Y-%m-%d/', verbose_name=_('Foto de perfil'))
-    foto_cabecera = models.ImageField(null=True, blank=True, upload_to='header_pics/%Y-%m-%d/', verbose_name=_('Foto de cabecera'))
+    foto_perfil = models.ImageField(null=True, blank=True, upload_to='imagenes/perfil_img/%Y-%m-%d/', verbose_name=_('Foto de perfil'))
+    foto_cabecera = models.ImageField(null=True, blank=True, upload_to='imagenes/cabecera_img/%Y-%m-%d/', verbose_name=_('Foto de cabecera'))
     email = models.EmailField(verbose_name=_("Email"), null=True)
     #UNIQUE EMAIL ??
     telefono_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=_("El teléfono debe tener el siguiente formato: '+999999999'. Permitidos hasta 15 dígitos."))
@@ -80,12 +80,14 @@ class Pista(models.Model):
 		('CEMENTO', 'Cemento'),
 	)
 
-	nombre = models.CharField(max_length=20, primary_key=True)
+	empresa = models.ForeignKey(Empresa)
+	nombre = models.CharField(max_length=20)
 	tipo_superficie = models.CharField(max_length=20, choices=TIPOS_SUPERFICIES, default='CESPED')
 	color = models.CharField(max_length=10, choices=COLORES, default='AZUL')
 	tipo_pared = models.CharField(max_length=20, choices=TIPOS_PARED, default='METACRILATO')
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)
+	foto = models.ImageField(null=True, blank=True, upload_to='static/images/pistas/', verbose_name=_('Foto de pista'))
 	
 	def __str__(self):
 		return self.nombre

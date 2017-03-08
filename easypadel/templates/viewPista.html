@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load thumbnail %}
+{% load groups %}
+{% load static %}
+
+{% block pagetitle %}{{pista.nombre}}{% endblock %}
+{% block pageheader %}
+
+<h1>{{pista.nombre}}</h1>
+
+
+{% if pista.empresa.user == user %}
+  <div class="profile-content pull-right">
+    <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
+
+    <div class="modal fade" id="delete-pista">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">¿Está seguro?</h4>
+                </div>
+                <div class="modal-body">
+                    <h5>¿Está seguro de querer borrar esta pista?</h5>
+                </div>
+                <div class="modal-footer">
+                   
+                        <a href="{% url 'deletePista' pista.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block pagespecial %}
+<div class="container sections-wrapper">
+  <div class="row">
+    <div class="primary col-md-8 col-sm-12 col-xs-12">
+      <section class="about section">
+        <div class="section-inner">
+          <h1>Foto de pista </h1>
+          <img src="{% static "images/imagen_wall.jpg"%}" class="img-responsive" alt="Responsive image">
+        </div>
+      </section>
+    </div>
+    <div class="secondary col-md-4 col-sm-12 col-xs-12">
+      <aside class="section">
+      	<div class="section-inner">
+          <h2 class="heading sr-only">Perfil</h2>
+          <div class="content">
+            <ul class="list-unstyled">
+
+              <li><strong>{{pista.nombre}}</strong></li>
+              <li><strong>Tipo de superficie: </strong> {{pista.tipo_superficie}}</li>
+              <li><strong>Color: </strong> {{pista.color}} </li>
+              <li><strong>Tipo pared: </strong> {{pista.tipo_pared}} </li>
+              <li><strong>Cubierta: </strong> {% if pista.cubierta %} Sí {% else %} No {%endif%} </li>
+              <li><strong>Descripción: </strong> {{pista.descripcion}} </li>
+              
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load thumbnail %}
+{% block pagetitle %} Pistas {% endblock %} 
+{% block pageheader %}
+<h1>Mis Pistas</h1> {% endblock %} 
+{% block pagebody %}
+
+{% for pista in list %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="media">
+				<div class="media-left">
+
+					<a href="/#">
+					</a>
+				</div>
+
+
+				<div class="media-body">
+					<h4 class="media-heading"><a href="{% url 'viewPista' pista.id %}">{{pista.nombre}}</a></h4>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+<p><a class="btn btn-success btn-lg" href="{% url 'createPista' %}" role="button">{% bootstrap_icon "plus" %} Añadir pista</a></p>
+
+
+{% endblock %} 

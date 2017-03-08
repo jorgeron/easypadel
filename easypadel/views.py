@@ -7,9 +7,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect, Http404
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm
+from easypadel.models import Pista, Empresa
 
 # Create your views here.
 def home(request):
@@ -114,5 +116,40 @@ def registroEmpresa(request):
     return render(request, 'registration.html', {'form':form, 'formEmpresa':form2, 'role':_("Empresa")})
 
 
+
 def registroCompleto(request, rtype):
     return render(request, 'registroCompleto.html', {'type':rtype})
+
+@login_required
+def deleteUser(request):
+    user = User.objects.get(pk = request.user.id)
+    user.delete()
+    return appLogout(request)
+
+
+
+def listPistas(request):
+    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
+    return render(request, 'listPistas.html', {'list':pistas})
+
+def viewPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    return render(request, 'viewPista.html', {'pista':pista})
+
+def deletePista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    pista.delete()
+    return listPistas(request)
+
+@user_passes_test(empresas_group)
+def createPista(request):
+    if request.method=='POST':
+        form = PistaForm(request.POST)
+        if form.is_valid():               
+            new_pista = form.save(commit=False)
+            new_pista.empresa_id = (Empresa.objects.get(user=request.user)).id
+            new_pista.save()    
+            return HttpResponseRedirect(reverse('listPistas'))
+    else:
+        form = PistaForm()
+    return render(request, 'form.html', {'form':form, 'class':_('Pista')})

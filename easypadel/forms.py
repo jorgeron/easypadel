@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.forms.models import ModelForm
 
-from easypadel.models import Jugador, Administrador, Empresa
+from easypadel.models import Jugador, Administrador, Empresa, Pista
 
 class BaseForm(ModelForm):
     required_css_class = 'required'
@@ -31,3 +31,9 @@ class EmpresaForm(BaseForm):
     class Meta:
         model = Empresa
         fields = ['nombre', 'email','telefono', 'direccion']
+
+class PistaForm(BaseForm):
+    class Meta:
+        model = Pista
+        fields = ['nombre', 'tipo_superficie', 'color', 'tipo_pared', 'cubierta', 
+                    'descripcion', 'foto' ]
