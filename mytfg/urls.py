@@ -34,8 +34,11 @@ urlpatterns = [
     url(r'^empresa/pistas/create$', easypadel.views.createPista, name='createPista'),
     url(r'^empresa/pistas/edit/(?P<pista_id>[0-9]+)/$', easypadel.views.editPista, name='editPista'),
     url(r'^empresa/pistas/delete/(?P<pista_id>[0-9]+)/$', easypadel.views.deletePista, name='deletePista'),
+    url(r'^empresa/horarios/list$', easypadel.views.listHorarios, name='listHorarios'),
+    url(r'^empresa/horarios/create$', easypadel.views.createHorario, name='createHorario'),
 
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),
+    url(r'^horarios/view/(?P<horario_id>[0-9]+)/$', easypadel.views.viewHorario, name='viewHorario'),
 
     url(r'^admin/', admin.site.urls),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

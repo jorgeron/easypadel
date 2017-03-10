@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% block pagetitle %} {{operation}} {{class}}{% endblock %}
+{% block pageheader %}
+	<h1>{{operation}} {{class}}</h1>
+{% endblock %}
+{% block pagebody %}
+
+	<form id='form' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+		{% bootstrap_icon "ok" %} Enviar
+		</button>
+		<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Cancelar
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

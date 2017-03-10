@@ -36,6 +36,7 @@
 
                     {% if request.user|has_group:"Empresas"%}
                         <li><a href="{% url 'listPistas' %}">{% bootstrap_icon "list" %} Mis Pistas</a></li>
+                        <li><a href="{% url 'listHorarios' %}">{% bootstrap_icon "list" %} Mis Horarios</a></li>
                     {% endif %}
 
                     <li class="dropdown">

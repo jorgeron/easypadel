@@ -7,7 +7,7 @@ from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
 
-from easypadel.models import Jugador, Administrador, Empresa, Pista
+from easypadel.models import Jugador, Administrador, Empresa, Pista, Horario
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -81,3 +81,8 @@ class PistaForm(BaseForm):
         widgets = {
             'foto': ImageInputWidget,
         }
+
+class HorarioForm(BaseForm):
+    class Meta:
+        model = Horario
+        fields = ['nombre']

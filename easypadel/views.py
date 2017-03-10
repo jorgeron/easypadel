@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm
-from easypadel.models import Pista, Empresa
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm
+from easypadel.models import Pista, Empresa, Horario
 
 # Create your views here.
 def home(request):
@@ -171,3 +171,30 @@ def createPista(request):
     else:
         form = PistaForm()
     return render(request, 'form.html', {'form':form, 'class':_('Pista'), 'operation':_('Crear')})
+
+
+
+
+
+@login_required
+def listHorarios(request):
+    horarios = Horario.objects.filter(empresa=Empresa.objects.get(user=request.user))
+    return render(request, 'listHorarios.html', {'list':horarios})
+
+@login_required
+def viewHorario(request, horario_id):
+    horario = Horario.objects.get(pk = horario_id)
+    return render(request, 'viewHorario.html', {'horario':horario})
+
+@user_passes_test(empresas_group)
+def createHorario(request):
+    if request.method=='POST':
+        form = HorarioForm(request.POST)
+        if form.is_valid():               
+            new_horario = form.save(commit=False)
+            new_horario.empresa_id = (Empresa.objects.get(user=request.user)).id
+            new_horario.save()    
+            return HttpResponseRedirect(reverse('listHorarios'))
+    else:
+        form = HorarioForm()
+    return render(request, 'formHorario.html', {'form':form, 'class':_('Horario'), 'operation':_('Crear')})

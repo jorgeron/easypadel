@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load thumbnail %}
+{% block pagetitle %} Horarios {% endblock %} 
+{% block pageheader %}
+<h1>Mis Horarios</h1> {% endblock %} 
+{% block pagebody %}
+
+{% for horario in list %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="media">
+				<div class="media-body">
+					<h4 class="media-heading"><a href="{% url 'viewHorario' horario.id %}">{{horario.nombre}}</a></h4>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+<p><a class="btn btn-success btn-lg" href="{% url 'createHorario' %}" role="button">{% bootstrap_icon "plus" %} Añadir horario</a></p>
+
+
+{% endblock %} 

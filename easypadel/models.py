@@ -91,3 +91,19 @@ class Pista(models.Model):
 	
 	def __str__(self):
 		return self.nombre
+
+
+class Horario(models.Model):
+	empresa = models.ForeignKey(Empresa)
+	nombre = models.CharField(max_length=20)
+
+	def __str__(self):
+		return self.nombre
+
+
+class FranjaHoraria(models.Model):
+	horario = models.ForeignKey(Horario)
+	hora_inicio = models.TimeField(auto_now=False, auto_now_add=False)
+	hora_fin = models.TimeField(auto_now=False, auto_now_add=False)
+	precio = models.DecimalField(max_digits=3, decimal_places=1)
+	disponible = models.BooleanField(default=True)
