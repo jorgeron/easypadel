@@ -9,9 +9,11 @@ from django.http.response import HttpResponseRedirect, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.forms import formset_factory
+from datetime import datetime,timedelta
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, DiaAsignacionHorarioFormSet
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm
+from django.forms import inlineformset_factory
 
 from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario
 
@@ -219,11 +221,22 @@ def createHorario(request):
     return render(request, 'formHorario.html', {'form':form, 'formFranjas':formFranjas, 'class':_('Horario'), 'operation':_('Crear')})
 
 
+
 @user_passes_test(empresas_group)
 def asignarHorario(request, horario_id):
     horario = Horario.objects.get(pk = horario_id)
     pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
     dia_pista_horario = DiaAsignacionHorario()
+
+    def get_field_qs(field, **kwargs):
+        formfield = field.formfield(**kwargs)
+        if field.name == 'pista':
+            formfield.queryset = formfield.queryset.filter(empresa=Empresa.objects.get(user=request.user))
+        return formfield
+
+    DiaAsignacionHorarioFormSet = inlineformset_factory(Horario, DiaAsignacionHorario,
+    form=DiaAsignacionHorarioForm, formfield_callback=get_field_qs, extra=1, can_delete=True)
+
     if request.method=='POST':
         form = DiaAsignacionHorarioFormSet(request.POST, instance=horario)
         if form.is_valid():
@@ -231,8 +244,17 @@ def asignarHorario(request, horario_id):
             return HttpResponseRedirect(reverse('viewHorario', kwargs={'horario_id':horario_id}))
     else:
         form = DiaAsignacionHorarioFormSet(instance=horario)
-        for f in form.forms:
-            f.fields['pista'].queryset = pistas
     return render(request, 'formAsignarHorario.html', {'form':form, 'horario':horario,
      'class':_('Horario'), 'operation':_('Asignar')})
 
+
+
+@login_required
+def viewHorarioPista(request, pista_id):
+    pista = Pista.objects.get(pk=pista_id)
+    hoy = datetime.now().date()
+    hoy_mas_7_dias = hoy + timedelta(days=7)
+    #mostramos al principio la semana actual
+    horario_pista = DiaAsignacionHorario.objects.filter(pista=pista)
+    horario_pista_dias = horario_pista.filter(dia__gte=hoy, dia__lte=hoy_mas_7_dias)
+    return render(request, 'viewHorarioPista.html', {'horario_pista_dias':horario_pista_dias, 'pista':pista})

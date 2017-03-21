@@ -12,9 +12,12 @@
 <h1>{{pista.nombre}}</h1>
 
 
-{% if editable %}
-  <div class="profile-content pull-right">
 
+<div class="profile-content pull-right">
+
+<a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "time" %} Ver horarios</a>
+
+{% if editable %}
   <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "edit" %} Editar Pista</a>
 
   <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
@@ -38,8 +41,9 @@
           </div>
       </div>
   </div>
+  {% endif %}
 </div>
-{% endif %}
+
 
 {% endblock %}
 

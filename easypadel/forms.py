@@ -105,7 +105,3 @@ class DiaAsignacionHorarioForm(ModelForm):
         model = DiaAsignacionHorario
         exclude = ()
         widgets = {'dia' : DateWidget(usel10n=True, bootstrap_version=3)}
-
-
-DiaAsignacionHorarioFormSet = inlineformset_factory(Horario, DiaAsignacionHorario,
-    form=DiaAsignacionHorarioForm, extra=1, can_delete=True)

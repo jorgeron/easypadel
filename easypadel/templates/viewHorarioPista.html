@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load thumbnail %}
+{% load groups %}
+{% load static %}
+
+{% block pagetitle %} Horario {{pista.nombre}}{% endblock %}
+{% block pageheader %}
+
+<h1>Horario {{pista.nombre}}</h1>
+
+{% endblock %}
+
+
+{% block pagespecial %}
+<div class="container sections-wrapper">
+  <div class="row">
+    <div class="primary col-md-8 col-sm-12 col-xs-12">
+      <table class="table table-bordered custab">
+        
+          {% for dia in horario_pista_dias %}
+          <thead>
+              <tr>
+                  <th></th>
+                  <th>{{dia.dia}}</th>
+              </tr>
+          </thead>
+              {% for franjaHoraria in dia.horario.franjaHorarias %}
+                <tr>
+                    <td>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</td>
+                    <td>{{franjaHoraria.precio}} €</td>
+                </tr>
+                <tr><p>Holaaaa</p></tr>
+              {% endfor %}
+                
+          {% endfor %}
+              
+                
+        </table>
+    </div>
+
+
+    
+  </div>
+</div>
+
+
+{% endblock %}
+
+
