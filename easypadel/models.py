@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
+
+
 
 # Create your models here.
 class Actor(models.Model):
@@ -88,7 +90,7 @@ class Pista(models.Model):
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)
 	foto = models.ImageField(null=True, blank=True, upload_to='images/pistas/%Y-%m-%d/', verbose_name=_('Foto de pista'))
-	
+
 	def __str__(self):
 		return self.nombre
 
@@ -105,5 +107,10 @@ class FranjaHoraria(models.Model):
 	horario = models.ForeignKey(Horario)
 	hora_inicio = models.TimeField(auto_now=False, auto_now_add=False)
 	hora_fin = models.TimeField(auto_now=False, auto_now_add=False)
-	precio = models.DecimalField(max_digits=3, decimal_places=1)
+	precio = models.DecimalField(max_digits=4, decimal_places=2, validators=[MinValueValidator(0.01)])
 	disponible = models.BooleanField(default=True)
+
+class DiaAsignacionHorario(models.Model):
+	pista = models.ForeignKey(Pista)
+	horario = models.ForeignKey(Horario)
+	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))

@@ -3,3 +3,4 @@ django-bootstrap3
 Pillow
 django-datetime-widget
 easy_thumbnails
+django_bootstrap_dynamic_formsets

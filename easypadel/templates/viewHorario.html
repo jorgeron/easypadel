@@ -6,16 +6,16 @@
 {% load groups %}
 {% load static %}
 
-{% block pagetitle %}{{horario.nombre}}{% endblock %}
+{% block pagetitle %} Horario {{horario.nombre}}{% endblock %}
 {% block pageheader %}
 
-<h1>{{horario.nombre}}</h1>
+<h1>Horario {{horario.nombre}}</h1>
 
 
 {% if editable %}
   <div class="profile-content pull-right">
 
-  <a href="{% url 'editHorario' horario.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "edit" %} Editar Horario</a>
+  <a class="btn btn-primary btn-sm" href="{% url 'asignarHorario' horario.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
 
   <a class="btn btn-danger btn-sm" href="#delete-horario" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar Horario</a>
 
@@ -44,5 +44,37 @@
 {% endblock %}
 
 
+{% block pagespecial %}
+<div class="container sections-wrapper">
+  <div class="row">
+    <div class="primary col-md-8 col-sm-12 col-xs-12">
+      <table class="table table-bordered custab">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Precio</th>
+                <th class="text-center">Disponible</th>
+            </tr>
+        </thead>
+          {% for franja in franjasHorarias %}
+                <tr>
+                    <td>{{franja.hora_inicio}} - {{franja.hora_fin}}</td>
+                    <td>{{franja.precio}} €</td>
+                    <td class="text-center">{% if franja.disponible %} {% bootstrap_icon "ok" %} 
+                    {% else %} {% bootstrap_icon "remove" %} {%endif%}</td>
+                </tr>
+                
+          {% endfor %}
+                
+        </table>
+    </div>
+
+
+    
+  </div>
+</div>
+
+
+{% endblock %}
 
 

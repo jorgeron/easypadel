@@ -1,13 +1,14 @@
-from datetimewidget.widgets import DateTimeWidget, DateWidget
-from django.forms.widgets import ClearableFileInput, CheckboxInput, NumberInput
+from datetimewidget.widgets import DateTimeWidget, DateWidget, TimeWidget
+from django.forms.widgets import ClearableFileInput, CheckboxInput, NumberInput, TimeInput
 from django.utils.safestring import mark_safe
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
+from django.forms import inlineformset_factory
 
-from easypadel.models import Jugador, Administrador, Empresa, Pista, Horario
+from easypadel.models import Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -86,3 +87,25 @@ class HorarioForm(BaseForm):
     class Meta:
         model = Horario
         fields = ['nombre']
+
+class FranjaHorariaForm(ModelForm):
+    class Meta:
+        model = FranjaHoraria
+        exclude = ()
+        widgets = {
+            'hora_inicio' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'}),
+            'hora_fin' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'})
+        }
+
+FranjaHorariaFormSet = inlineformset_factory(Horario, FranjaHoraria,
+                                            form=FranjaHorariaForm, extra=1, can_delete=True)
+
+class DiaAsignacionHorarioForm(ModelForm):
+    class Meta:
+        model = DiaAsignacionHorario
+        exclude = ()
+        widgets = {'dia' : DateWidget(usel10n=True, bootstrap_version=3)}
+
+
+DiaAsignacionHorarioFormSet = inlineformset_factory(Horario, DiaAsignacionHorario,
+    form=DiaAsignacionHorarioForm, extra=1, can_delete=True)

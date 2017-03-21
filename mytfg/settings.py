@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'easy_thumbnails',
     'datetimewidget',
+    'django_bootstrap_dynamic_formsets',
 ]
 
 MIDDLEWARE = [

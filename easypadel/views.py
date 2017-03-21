@@ -8,10 +8,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.forms import formset_factory
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm
-from easypadel.models import Pista, Empresa, Horario
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, DiaAsignacionHorarioFormSet
+
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario
 
 # Create your views here.
 def home(request):
@@ -184,17 +186,53 @@ def listHorarios(request):
 @login_required
 def viewHorario(request, horario_id):
     horario = Horario.objects.get(pk = horario_id)
-    return render(request, 'viewHorario.html', {'horario':horario})
+    editable = (request.user == horario.empresa.user)
+    franjasHorarias = FranjaHoraria.objects.filter(horario__id = horario_id)
+    return render(request, 'viewHorario.html', {'horario':horario, 'editable':editable,
+     'franjasHorarias':franjasHorarias})
+
+@user_passes_test(empresas_group)
+def deleteHorario(request, horario_id):
+    horario = Horario.objects.get(pk = horario_id)
+    horario.delete()
+    return listHorarios(request)
+
 
 @user_passes_test(empresas_group)
 def createHorario(request):
+    horario = Horario()
     if request.method=='POST':
-        form = HorarioForm(request.POST)
-        if form.is_valid():               
-            new_horario = form.save(commit=False)
-            new_horario.empresa_id = (Empresa.objects.get(user=request.user)).id
-            new_horario.save()    
+        form = HorarioForm(request.POST, instance = horario)
+        formFranjas = FranjaHorariaFormSet(request.POST, instance = horario)
+        if form.is_valid() and formFranjas.is_valid():
+
+            horario = form.save(commit=False)
+            horario.empresa_id = (Empresa.objects.get(user=request.user)).id
+            horario.save()
+            formFranjas.save()    
+
             return HttpResponseRedirect(reverse('listHorarios'))
     else:
-        form = HorarioForm()
-    return render(request, 'formHorario.html', {'form':form, 'class':_('Horario'), 'operation':_('Crear')})
+        horario = Horario()
+        form = HorarioForm(instance = horario)
+        formFranjas = FranjaHorariaFormSet(instance = horario)
+    return render(request, 'formHorario.html', {'form':form, 'formFranjas':formFranjas, 'class':_('Horario'), 'operation':_('Crear')})
+
+
+@user_passes_test(empresas_group)
+def asignarHorario(request, horario_id):
+    horario = Horario.objects.get(pk = horario_id)
+    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
+    dia_pista_horario = DiaAsignacionHorario()
+    if request.method=='POST':
+        form = DiaAsignacionHorarioFormSet(request.POST, instance=horario)
+        if form.is_valid():
+            dia_pista_horario.dia = form.save()
+            return HttpResponseRedirect(reverse('viewHorario', kwargs={'horario_id':horario_id}))
+    else:
+        form = DiaAsignacionHorarioFormSet(instance=horario)
+        for f in form.forms:
+            f.fields['pista'].queryset = pistas
+    return render(request, 'formAsignarHorario.html', {'form':form, 'horario':horario,
+     'class':_('Horario'), 'operation':_('Asignar')})
+
