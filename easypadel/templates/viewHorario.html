@@ -15,8 +15,6 @@
 {% if editable %}
   <div class="profile-content pull-right">
 
-  <a class="btn btn-primary btn-sm" href="{% url 'asignarHorario' horario.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
-
   <a class="btn btn-danger btn-sm" href="#delete-horario" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar Horario</a>
 
   <div class="modal fade" id="delete-horario">

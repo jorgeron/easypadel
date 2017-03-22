@@ -1,29 +1,26 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load static %}
-{% load bootstrap_dynamic_formsets %}
 
 {% block head %}{{ form.media }}{% endblock %}
 
 {% block pagetitle %} {{operation}} {{class}}{% endblock %}
 {% block pageheader %}
-	<h1>{{operation}} {{class}} "{{horario.nombre}}"</h1>
+	<h1>{{operation}} {{class}} "{{pista.nombre}}"</h1>
 {% endblock %}
 {% block pagebody %}
 
 	<form id='form' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
+		{% bootstrap_form form %}
 
-
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Seleccione los días a asignar</h3>
-          </div>
-          <div class="panel-body">
-            {% bootstrap_dynamic_formset form can_delete=True layout="horizontal" %}
-          </div>
-        </div>
-
-
+		{% for horario in horarios %}
+			<div class="radio">
+			  <label>
+			    <input type="radio" name="horario" id="{{horario.id}}" value="{{horario.id}}" required>
+			    {{horario.nombre}}
+			  </label>
+			</div>
+		{% endfor %}
 
 		{% buttons %}
 		<button type="submit" class="btn btn-primary">

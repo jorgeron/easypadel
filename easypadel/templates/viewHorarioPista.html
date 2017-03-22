@@ -18,27 +18,26 @@
 <div class="container sections-wrapper">
   <div class="row">
     <div class="primary col-md-8 col-sm-12 col-xs-12">
-      <table class="table table-bordered custab">
+      
         
           {% for dia in horario_pista_dias %}
+          <table class="table table-bordered custab">
           <thead>
               <tr>
-                  <th></th>
                   <th>{{dia.dia}}</th>
               </tr>
           </thead>
-              {% for franjaHoraria in dia.horario.franjaHorarias %}
+              {% for franjaHoraria in dic_dias_franjas|get_item:dia.id %}
                 <tr>
                     <td>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</td>
                     <td>{{franjaHoraria.precio}} €</td>
                 </tr>
-                <tr><p>Holaaaa</p></tr>
               {% endfor %}
-                
+          </table>
           {% endfor %}
               
                 
-        </table>
+        
     </div>
 
 

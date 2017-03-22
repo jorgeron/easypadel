@@ -83,6 +83,7 @@ class Pista(models.Model):
 	)
 
 	empresa = models.ForeignKey(Empresa)
+
 	nombre = models.CharField(max_length=20)
 	tipo_superficie = models.CharField(max_length=20, choices=TIPOS_SUPERFICIES, default='CESPED')
 	color = models.CharField(max_length=10, choices=COLORES, default='AZUL')
@@ -97,20 +98,30 @@ class Pista(models.Model):
 
 class Horario(models.Model):
 	empresa = models.ForeignKey(Empresa)
+
 	nombre = models.CharField(max_length=20)
 
 	def __str__(self):
 		return self.nombre
 
 
+class DiaAsignacionHorario(models.Model):
+	pista = models.ForeignKey(Pista)
+
+	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))
+
 class FranjaHoraria(models.Model):
 	horario = models.ForeignKey(Horario)
+	dia_asignacion = models.ForeignKey(DiaAsignacionHorario, blank=True, null=True)
+
 	hora_inicio = models.TimeField(auto_now=False, auto_now_add=False)
 	hora_fin = models.TimeField(auto_now=False, auto_now_add=False)
 	precio = models.DecimalField(max_digits=4, decimal_places=2, validators=[MinValueValidator(0.01)])
 	disponible = models.BooleanField(default=True)
+	asignada = models.BooleanField(default=False)
 
-class DiaAsignacionHorario(models.Model):
+'''class DiaAsignacionHorario(models.Model):
 	pista = models.ForeignKey(Pista)
 	horario = models.ForeignKey(Horario)
-	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))
+	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))'''
+

@@ -18,6 +18,9 @@
 <a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "time" %} Ver horarios</a>
 
 {% if editable %}
+
+  <a class="btn btn-primary btn-sm" href="{% url 'asignarHorario' pista.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
+
   <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "edit" %} Editar Pista</a>
 
   <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>

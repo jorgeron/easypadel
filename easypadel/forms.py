@@ -91,7 +91,7 @@ class HorarioForm(BaseForm):
 class FranjaHorariaForm(ModelForm):
     class Meta:
         model = FranjaHoraria
-        exclude = ()
+        exclude = ('dia_asignacion', 'asignada')
         widgets = {
             'hora_inicio' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'}),
             'hora_fin' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'})
@@ -103,5 +103,5 @@ FranjaHorariaFormSet = inlineformset_factory(Horario, FranjaHoraria,
 class DiaAsignacionHorarioForm(ModelForm):
     class Meta:
         model = DiaAsignacionHorario
-        exclude = ()
+        exclude = ('pista',)
         widgets = {'dia' : DateWidget(usel10n=True, bootstrap_version=3)}

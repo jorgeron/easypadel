@@ -222,12 +222,7 @@ def createHorario(request):
 
 
 
-@user_passes_test(empresas_group)
-def asignarHorario(request, horario_id):
-    horario = Horario.objects.get(pk = horario_id)
-    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
-    dia_pista_horario = DiaAsignacionHorario()
-
+''' PASAR PARÁMETROS A INLINE FORM
     def get_field_qs(field, **kwargs):
         formfield = field.formfield(**kwargs)
         if field.name == 'pista':
@@ -235,18 +230,34 @@ def asignarHorario(request, horario_id):
         return formfield
 
     DiaAsignacionHorarioFormSet = inlineformset_factory(Horario, DiaAsignacionHorario,
-    form=DiaAsignacionHorarioForm, formfield_callback=get_field_qs, extra=1, can_delete=True)
+    form=DiaAsignacionHorarioForm, formfield_callback=get_field_qs, extra=1, can_delete=True)'''
 
+
+@user_passes_test(empresas_group)
+def asignarHorario(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    horarios = Horario.objects.filter(empresa=Empresa.objects.get(user=request.user))
+    dia_pista_horario = DiaAsignacionHorario()
+    dia_pista_horario.pista_id = pista.id
     if request.method=='POST':
-        form = DiaAsignacionHorarioFormSet(request.POST, instance=horario)
+        form = DiaAsignacionHorarioForm(request.POST, instance=dia_pista_horario)
+        #horario = Horario.objects.get(pk = request.POST.get('horario'))
+        franjas_horarias = FranjaHoraria.objects.filter(horario_id = request.POST.get('horario'))
         if form.is_valid():
-            dia_pista_horario.dia = form.save()
-            return HttpResponseRedirect(reverse('viewHorario', kwargs={'horario_id':horario_id}))
+            dia_pista_horario = form.save()
+            for f in franjas_horarias:
+                new_franja = f
+                #Para que no actualice la existente y cree una nueva, cambiamos la PK
+                new_franja.pk = None
+                new_franja.dia_asignacion = dia_pista_horario
+                new_franja.asignada = True
+                new_franja.save()
+            return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
     else:
-        form = DiaAsignacionHorarioFormSet(instance=horario)
-    return render(request, 'formAsignarHorario.html', {'form':form, 'horario':horario,
-     'class':_('Horario'), 'operation':_('Asignar')})
+        form = DiaAsignacionHorarioForm(instance=dia_pista_horario)
 
+    return render(request, 'formAsignarHorario.html', {'form':form, 'pista':pista, 'horarios':horarios,
+     'class':_('Horario'), 'operation':_('Asignar')})
 
 
 @login_required
@@ -257,4 +268,15 @@ def viewHorarioPista(request, pista_id):
     #mostramos al principio la semana actual
     horario_pista = DiaAsignacionHorario.objects.filter(pista=pista)
     horario_pista_dias = horario_pista.filter(dia__gte=hoy, dia__lte=hoy_mas_7_dias)
-    return render(request, 'viewHorarioPista.html', {'horario_pista_dias':horario_pista_dias, 'pista':pista})
+    dic_dias_franjas = {}
+
+    for dia in horario_pista_dias:
+        franjas_horarias = FranjaHoraria.objects.filter(dia_asignacion = dia)
+        dic_dias_franjas[dia.id] = franjas_horarias
+    
+    return render(request, 'viewHorarioPista.html', {'horario_pista_dias':horario_pista_dias, 'pista':pista,
+        'dic_dias_franjas':dic_dias_franjas})
+
+
+
+
