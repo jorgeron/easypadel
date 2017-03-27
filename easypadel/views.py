@@ -193,7 +193,7 @@ def listHorarios(request):
 def viewHorario(request, horario_id):
     horario = Horario.objects.get(pk = horario_id)
     editable = (request.user == horario.empresa.user)
-    franjasHorarias = FranjaHoraria.objects.filter(horario__id = horario_id)
+    franjasHorarias = FranjaHoraria.objects.filter(horario__id = horario_id, asignada=False)
     return render(request, 'viewHorario.html', {'horario':horario, 'editable':editable,
      'franjasHorarias':franjasHorarias})
 
@@ -262,8 +262,7 @@ def asignarHorario(request, pista_id):
         form = DiaAsignacionHorarioForm(request.POST, instance=dia_pista_horario)
 
         if form.is_valid():
-            franjas_horarias = FranjaHoraria.objects.filter(horario_id = request.POST.get('horario'))
-            dias_asignacion_pista = DiaAsignacionHorario.objects.filter(pista_id = pista_id)
+            franjas_horarias = FranjaHoraria.objects.filter(horario_id = request.POST.get('horario'), asignada=False)
             
             try:
                 dia_pista_horario = form.save()
@@ -275,7 +274,7 @@ def asignarHorario(request, pista_id):
                     new_franja.asignada = True
                     new_franja.save()
 
-                    return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+                return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
             except IntegrityError as e:
                 form = DiaAsignacionHorarioForm(instance=dia_pista_horario)
                 form.full_clean()
