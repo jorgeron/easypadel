@@ -13,6 +13,7 @@
 	<form id='form' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
 		{% bootstrap_form form %}
 
+		<b>Horario</b>
 		{% for horario in horarios %}
 			<div class="radio">
 			  <label>

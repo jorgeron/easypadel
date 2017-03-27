@@ -24,13 +24,20 @@
           <table class="table table-bordered custab">
           <thead>
               <tr>
-                  <th>{{dia.dia}}</th>
+                  <th class="text-center" colspan="3">{{dia.dia}}</th>
+              </tr>
+              <tr>
+                  <th>Hora</th>
+                  <th>Precio</th>
+                  <th>Disponibilidad</th>
               </tr>
           </thead>
               {% for franjaHoraria in dic_dias_franjas|get_item:dia.id %}
                 <tr>
                     <td>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</td>
                     <td>{{franjaHoraria.precio}} €</td>
+                    <td class="text-center">{% if franjaHoraria.disponible %} {% bootstrap_icon "ok" %} 
+                    {% else %} {% bootstrap_icon "remove" %} {%endif%}</td>
                 </tr>
               {% endfor %}
           </table>

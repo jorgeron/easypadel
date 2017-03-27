@@ -109,6 +109,8 @@ class DiaAsignacionHorario(models.Model):
 	pista = models.ForeignKey(Pista)
 
 	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))
+	class Meta:
+		unique_together = (('pista','dia'),)
 
 class FranjaHoraria(models.Model):
 	horario = models.ForeignKey(Horario)
@@ -120,8 +122,4 @@ class FranjaHoraria(models.Model):
 	disponible = models.BooleanField(default=True)
 	asignada = models.BooleanField(default=False)
 
-'''class DiaAsignacionHorario(models.Model):
-	pista = models.ForeignKey(Pista)
-	horario = models.ForeignKey(Horario)
-	dia = models.DateField(auto_now=False ,verbose_name=_("Día"))'''
 

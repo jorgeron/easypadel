@@ -8,8 +8,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 from django.forms import formset_factory
+from django.db import IntegrityError
 from datetime import datetime,timedelta
+from django.forms.forms import NON_FIELD_ERRORS
+
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
 from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm
@@ -195,8 +199,14 @@ def viewHorario(request, horario_id):
 
 @user_passes_test(empresas_group)
 def deleteHorario(request, horario_id):
+    franjas_horarias = FranjaHoraria.objects.filter(horario__id = horario_id)
+    for f in franjas_horarias:
+        if f.dia_asignacion:
+            f.dia_asignacion.delete()
+
     horario = Horario.objects.get(pk = horario_id)
     horario.delete()
+    
     return listHorarios(request)
 
 
@@ -237,27 +247,46 @@ def createHorario(request):
 def asignarHorario(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
     horarios = Horario.objects.filter(empresa=Empresa.objects.get(user=request.user))
+
+    horarios_validos = []
+    for h in horarios:
+        franjas = FranjaHoraria.objects.filter(horario_id = h.id)
+        if franjas:
+            horarios_validos.append(h)
+
+    
     dia_pista_horario = DiaAsignacionHorario()
     dia_pista_horario.pista_id = pista.id
     if request.method=='POST':
+
         form = DiaAsignacionHorarioForm(request.POST, instance=dia_pista_horario)
-        #horario = Horario.objects.get(pk = request.POST.get('horario'))
-        franjas_horarias = FranjaHoraria.objects.filter(horario_id = request.POST.get('horario'))
+
         if form.is_valid():
-            dia_pista_horario = form.save()
-            for f in franjas_horarias:
-                new_franja = f
-                #Para que no actualice la existente y cree una nueva, cambiamos la PK
-                new_franja.pk = None
-                new_franja.dia_asignacion = dia_pista_horario
-                new_franja.asignada = True
-                new_franja.save()
-            return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+            franjas_horarias = FranjaHoraria.objects.filter(horario_id = request.POST.get('horario'))
+            dias_asignacion_pista = DiaAsignacionHorario.objects.filter(pista_id = pista_id)
+            
+            try:
+                dia_pista_horario = form.save()
+                for f in franjas_horarias:
+                    new_franja = f
+                    #Para que no actualice la existente y cree una nueva, cambiamos la PK
+                    new_franja.pk = None
+                    new_franja.dia_asignacion = dia_pista_horario
+                    new_franja.asignada = True
+                    new_franja.save()
+
+                    return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+            except IntegrityError as e:
+                form = DiaAsignacionHorarioForm(instance=dia_pista_horario)
+                form.full_clean()
+                form._errors[NON_FIELD_ERRORS] = form.error_class(['Día ya asignado'])
+                return render(request, 'formAsignarHorario.html', {'form':form, 'pista':pista, 
+                    'horarios':horarios_validos, 'class':_('Horario'), 'operation':_('Asignar'), 'pista_id':pista_id})
+            
     else:
         form = DiaAsignacionHorarioForm(instance=dia_pista_horario)
-
-    return render(request, 'formAsignarHorario.html', {'form':form, 'pista':pista, 'horarios':horarios,
-     'class':_('Horario'), 'operation':_('Asignar')})
+        return render(request, 'formAsignarHorario.html', {'form':form, 'pista':pista, 
+            'horarios':horarios_validos, 'class':_('Horario'), 'operation':_('Asignar')})
 
 
 @login_required
