@@ -71,12 +71,6 @@ class Pista(models.Model):
 		('MOQUETA', 'Moqueta'),
 	)
 
-	COLORES = (
-		('AZUL', 'Azul'),
-		('VERDE', 'Verde'),
-		('MARRON', 'Marrón'),
-	)
-
 	TIPOS_PARED = (
 		('METACRILATO', 'Metacrilato'),
 		('CEMENTO', 'Cemento'),
@@ -86,7 +80,6 @@ class Pista(models.Model):
 
 	nombre = models.CharField(max_length=20)
 	tipo_superficie = models.CharField(max_length=20, choices=TIPOS_SUPERFICIES, default='CESPED')
-	color = models.CharField(max_length=10, choices=COLORES, default='AZUL')
 	tipo_pared = models.CharField(max_length=20, choices=TIPOS_PARED, default='METACRILATO')
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)

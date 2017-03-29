@@ -27,9 +27,8 @@
 		<button type="submit" class="btn btn-primary">
 		{% bootstrap_icon "ok" %} Enviar
 		</button>
-		<button class="btn btn-danger" onClick="window.history.back();return false;">
-		{% bootstrap_icon "chevron-left" %} Cancelar
-		</button>
+		<a href="{% url 'viewPista' pista.id %}" class="btn btn-danger" role="button">
+        {% bootstrap_icon "chevron-left" %} Cancelar</a>
 		{% endbuttons %}
 	</form>
 

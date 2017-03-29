@@ -78,7 +78,7 @@ class EmpresaForm(BaseForm):
 class PistaForm(BaseForm):
     class Meta:
         model = Pista
-        fields = ['nombre', 'tipo_superficie', 'color', 'tipo_pared', 'cubierta', 
+        fields = ['nombre', 'tipo_superficie', 'tipo_pared', 'cubierta', 
                     'descripcion', 'foto' ]
         widgets = {
             'foto': ImageInputWidget,
