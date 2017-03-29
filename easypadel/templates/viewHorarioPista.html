@@ -6,6 +6,7 @@
 {% load groups %}
 {% load static %}
 
+{% block head %}{{ formFechas.media }}{% endblock %}
 {% block pagetitle %} Horario {{pista.nombre}}{% endblock %}
 {% block pageheader %}
 
@@ -42,13 +43,29 @@
               {% endfor %}
           </table>
           {% endfor %}
-              
-                
-        
+    
     </div>
 
+    <div class="secondary col-md-4 col-sm-12 col-xs-12">
+      <aside class="section">
+        <div class="section-inner">
+          <form id='formFechas' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
+            
+            {% bootstrap_form formFechas %}
 
-    
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">
+            {% bootstrap_icon "ok" %} Ver horarios
+            </button>
+            <a href="{% url 'viewPista' pista.id %}" class="btn btn-danger" role="button">
+            {% bootstrap_icon "chevron-left" %}Volver</a>
+            {% endbuttons %}
+
+          </form>
+        </div>
+      </aside>
+    </div>
+
   </div>
 </div>
 

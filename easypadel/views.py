@@ -16,7 +16,7 @@ from django.forms.forms import NON_FIELD_ERRORS
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm
 from django.forms import inlineformset_factory
 
 from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario
@@ -275,6 +275,7 @@ def asignarHorario(request, pista_id):
                     new_franja.save()
 
                 return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+
             except IntegrityError as e:
                 form = DiaAsignacionHorarioForm(instance=dia_pista_horario)
                 form.full_clean()
@@ -291,19 +292,38 @@ def asignarHorario(request, pista_id):
 @login_required
 def viewHorarioPista(request, pista_id):
     pista = Pista.objects.get(pk=pista_id)
-    hoy = datetime.now().date()
-    hoy_mas_7_dias = hoy + timedelta(days=7)
-    #mostramos al principio la semana actual
-    horario_pista = DiaAsignacionHorario.objects.filter(pista=pista)
-    horario_pista_dias = horario_pista.filter(dia__gte=hoy, dia__lte=hoy_mas_7_dias)
-    dic_dias_franjas = {}
+    
 
-    for dia in horario_pista_dias:
-        franjas_horarias = FranjaHoraria.objects.filter(dia_asignacion = dia)
-        dic_dias_franjas[dia.id] = franjas_horarias
+    if request.method == 'POST':
+        formFechas = FiltroFechasHorariosForm(request.POST)
+        if formFechas.is_valid():
+            fecha_inicio = formFechas.cleaned_data['fecha_inicio']
+            fecha_fin = formFechas.cleaned_data['fecha_fin']
+
+    else:
+        formFechas = FiltroFechasHorariosForm()
+
+        fecha_inicio = datetime.now().date()
+        fecha_fin = fecha_inicio + timedelta(days=7)
+        #mostramos al principio la semana actual
+        formFechas.fecha_inicio = fecha_inicio
+        formFechas.fecha_fin = fecha_fin
+
+    horario_pista = DiaAsignacionHorario.objects.filter(pista=pista)
+
+    dic_dias_franjas = {}
+    horario_pista_dias = []
+    if horario_pista:
+        horario_pista_dias = horario_pista.filter(dia__gte=fecha_inicio, dia__lte=fecha_fin)
+    
+
+    if horario_pista_dias:
+        for dia in horario_pista_dias:
+            franjas_horarias = FranjaHoraria.objects.filter(dia_asignacion = dia)
+            dic_dias_franjas[dia.id] = franjas_horarias
     
     return render(request, 'viewHorarioPista.html', {'horario_pista_dias':horario_pista_dias, 'pista':pista,
-        'dic_dias_franjas':dic_dias_franjas})
+        'dic_dias_franjas':dic_dias_franjas, 'formFechas':formFechas})
 
 
 

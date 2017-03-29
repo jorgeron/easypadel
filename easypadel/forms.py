@@ -7,6 +7,7 @@ from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
 from django.forms import inlineformset_factory
+from datetime import datetime,timedelta
 
 from easypadel.models import Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario
 
@@ -105,3 +106,11 @@ class DiaAsignacionHorarioForm(ModelForm):
         model = DiaAsignacionHorario
         exclude = ('pista',)
         widgets = {'dia' : DateWidget(usel10n=True, bootstrap_version=3)}
+
+class FiltroFechasHorariosForm(forms.Form):
+    hoy = datetime.now().date()
+    hoy_mas_7_dias = hoy + timedelta(days=7)
+
+    fecha_inicio = forms.DateField(initial=hoy, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
+    fecha_fin = forms.DateField(initial=hoy_mas_7_dias, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
+    
