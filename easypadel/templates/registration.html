@@ -13,8 +13,11 @@
 {% endblock %}
 {% block pagebody %}
 	<form id='form' method='post' action=''>{% csrf_token %}
+		<h3>Credenciales de usuario</h3>
 		{% bootstrap_form form %}
 
+
+		<h3>Datos personales</h3>
 		{% if formJugador %}
 		{% bootstrap_form formJugador %}
 		{% endif %}

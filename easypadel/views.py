@@ -68,7 +68,15 @@ def registroJugador(request):
         form = UserCreationForm(request.POST)
         form2 = JugadorForm(request.POST)
         if form.is_valid():
-            if form2.is_valid():                
+            if form2.is_valid():
+                #Comprobamos edad > 16 años (16 años = 5840 dias)
+                hoy = datetime.now().date()
+                hoy_menos_16_anios = hoy - timedelta(days=5840)
+                if form2.cleaned_data['fecha_nacimiento'] > hoy_menos_16_anios:
+                    form2.full_clean()
+                    form2._errors['fecha_nacimiento'] = form.error_class(['Debes tener más de 16 años para registrarte'])
+                    return render(request, 'registration.html', {'form':form, 'formJugador':form2, 'role':_("Jugador")})
+
                 new_user = form.save()
                 new_jugador = form2.save(commit=False)
                 new_jugador.user_id = new_user.id
@@ -155,6 +163,15 @@ def editPista(request, pista_id):
     if request.method=='POST':
         form = auxPistaForm(pista, request.POST, request.FILES)
         if form.is_valid():
+            #Comprobamos si existe otra pista con el mismo nombre en la misma empresa
+            empresa_id = (Empresa.objects.get(user=request.user)).id
+            pistas_empresa = Pista.objects.filter(empresa_id = empresa_id)
+            for p in pistas_empresa:
+                if p.nombre.capitalize() == form.cleaned_data['nombre'].capitalize():
+                    form.full_clean()
+                    form._errors['nombre'] = form.error_class(['Ya existe otra pista con el mismo nombre en estas instalaciones'])
+                    return render(request, 'form.html', {'form':form, 'pista':pista,'class':_('Pista'), 'operation':_('Editar')})
+                    
             form.save()
             return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
     else:
@@ -171,9 +188,18 @@ def deletePista(request, pista_id):
 def createPista(request):
     if request.method=='POST':
         form = PistaForm(request.POST, request.FILES)
-        if form.is_valid():               
+        if form.is_valid():
+            #Comprobamos si existe otra pista con el mismo nombre en la misma empresa
+            empresa_id = (Empresa.objects.get(user=request.user)).id
+            pistas_empresa = Pista.objects.filter(empresa_id = empresa_id)
+            for p in pistas_empresa:
+                if p.nombre.capitalize() == form.cleaned_data['nombre'].capitalize():
+                    form.full_clean()
+                    form._errors['nombre'] = form.error_class(['Ya existe otra pista con el mismo nombre en estas instalaciones'])
+                    return render(request, 'form.html', {'form':form, 'class':_('Pista'), 'operation':_('Crear')})
+
             new_pista = form.save(commit=False)
-            new_pista.empresa_id = (Empresa.objects.get(user=request.user)).id
+            new_pista.empresa_id = empresa_id
             new_pista.save()    
             return HttpResponseRedirect(reverse('listPistas'))
     else:
@@ -217,9 +243,18 @@ def createHorario(request):
         form = HorarioForm(request.POST, instance = horario)
         formFranjas = FranjaHorariaFormSet(request.POST, instance = horario)
         if form.is_valid() and formFranjas.is_valid():
+            empresa_id = (Empresa.objects.get(user=request.user)).id
+            #comprobamos si existe otro horario con el mismo nombre en la misma empresa
+            horarios_empresa = Horario.objects.filter(empresa_id = empresa_id)
+            for h in horarios_empresa:
+                if h.nombre.capitalize() == form.cleaned_data['nombre'].capitalize():
+                    form.full_clean()
+                    form._errors['nombre'] = form.error_class(['Ya existe otro horario con el mismo nombre en esta empresa'])
+                    return render(request, 'formHorario.html', {'form':form, 'formFranjas':formFranjas, 'class':_('Horario'), 'operation':_('Crear')})
+
 
             horario = form.save(commit=False)
-            horario.empresa_id = (Empresa.objects.get(user=request.user)).id
+            horario.empresa_id = empresa_id
             horario.save()
             formFranjas.save()    
 
