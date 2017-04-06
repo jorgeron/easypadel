@@ -167,7 +167,7 @@ def editPista(request, pista_id):
             empresa_id = (Empresa.objects.get(user=request.user)).id
             pistas_empresa = Pista.objects.filter(empresa_id = empresa_id)
             for p in pistas_empresa:
-                if p.nombre.capitalize() == form.cleaned_data['nombre'].capitalize():
+                if (p.nombre.capitalize() == form.cleaned_data['nombre'].capitalize()) and (p.id != int(pista_id)):
                     form.full_clean()
                     form._errors['nombre'] = form.error_class(['Ya existe otra pista con el mismo nombre en estas instalaciones'])
                     return render(request, 'form.html', {'form':form, 'pista':pista,'class':_('Pista'), 'operation':_('Editar')})
