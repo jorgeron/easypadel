@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load thumbnail %}
+{% load groups %}
+
+{% block pagetitle %}{{empresa.nombre}} - Perfil{% endblock %}
+{% block pageheader %}
+
+<header class="header">
+<div class="profile-head" style="background-image:linear-gradient(rgba(255,224,192,.5),rgba(0,0,0,.5)),url({%static "img/noise.png"%}),url({%static "img/noise.png"%}),url({%static "img/diag.png"%}),url({%if empresa.foto_cabecera%} {{empresa.foto_cabecera.url}}{%else%}{%static "img/default_header.png"%}{%endif%})">
+  <div class="container">
+  <img title="profile picture" class="profile-image img-responsive pull-left img-circle" src="{% thumbnail empresa.picture|default:'default_profile.png' 140x140 crop %}">
+  <div class="profile-content pull-left">
+    <h1>{{ empresa.nombre }}</h1>
+  </div>
+  {% if request.user.is_authenticated %}
+  <div class="btn-group pull-right">
+    
+    
+  </div>
+  {% endif %}
+</div>
+</header>
+
+{% endblock %}
+
+{% block pagespecial %}
+<div class="container sections-wrapper">
+  <div class="row">
+    <div class="primary col-md-8 col-sm-12 col-xs-12">
+      <section class="about section">
+        <div class="section-inner">
+          <a class="btn btn-primary btn-sm" href="{% url 'listPistas' empresa.user.id %}">{% bootstrap_icon "list-alt" %} Ver pistas</a>
+          <center><h4>{{empresa.nombre}} no ha publicado ningún post todavía</h4></center>
+          
+        </div>
+      </section>
+    </div>
+    <div class="secondary col-md-4 col-sm-12 col-xs-12">
+      <aside class="section">
+      	<div class="section-inner">
+          <h2 class="heading sr-only">Perfil</h2>
+          <div class="content">
+            <ul class="list-unstyled">
+              {%if empresa.descripcion %}
+              <li><strong>{% bootstrap_icon "user" %}</strong> {{ empresa.descripcion }}</li>{%endif%}
+              
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+

@@ -19,7 +19,7 @@ from easypadel.decorators import anonymous_required, admin_group, jugadores_grou
 from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador
 
 # Create your views here.
 def home(request):
@@ -144,9 +144,10 @@ def deleteUser(request):
 
 
 @login_required
-def listPistas(request):
-    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user=request.user))
-    return render(request, 'listPistas.html', {'list':pistas})
+def listPistas(request, user_id):
+    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id))
+    propietario = (user_id == str(request.user.id))
+    return render(request, 'listPistas.html', {'list':pistas, 'propietario':propietario})
 
 @login_required
 def viewPista(request, pista_id):
@@ -362,4 +363,23 @@ def viewHorarioPista(request, pista_id):
 
 
 
+@user_passes_test(jugadores_group)
+def listEmpresas(request):
+    empresas = Empresa.objects.all()
+    return render(request, 'listEmpresas.html', {'list':empresas})
 
+@login_required
+def viewEmpresa(request, empresa_id):
+    empresa = Empresa.objects.get(pk = empresa_id)
+    #editable = (request.user == horario.empresa.user)
+    #franjasHorarias = FranjaHoraria.objects.filter(horario__id = horario_id, asignada=False)
+    return render(request, 'profiles/show_profile_empresa.html', {'empresa':empresa})
+
+@user_passes_test(jugadores_group)
+def alquilarFranja(request, franjaHoraria_id):
+    jugador = Jugador.objects.get(user_id = request.user.id)
+    franja_horaria = FranjaHoraria.objects.get(pk = franjaHoraria_id)
+    franja_horaria.disponible = False
+    franja_horaria.jugador = jugador
+    franja_horaria.save()
+    return render(request, 'viewPista.html', {'pista':franja_horaria.dia_asignacion.pista})

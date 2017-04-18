@@ -45,6 +45,10 @@
       </div>
   </div>
   {% endif %}
+
+  <a href="{% url 'listPistas' pista.empresa.user.id %}" class="btn btn-danger btn-sm" role="button">
+            {% bootstrap_icon "chevron-left" %}Volver</a>
+
 </div>
 
 

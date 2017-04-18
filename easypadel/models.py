@@ -108,6 +108,7 @@ class DiaAsignacionHorario(models.Model):
 class FranjaHoraria(models.Model):
 	horario = models.ForeignKey(Horario)
 	dia_asignacion = models.ForeignKey(DiaAsignacionHorario, blank=True, null=True)
+	jugador = models.ForeignKey(Jugador, blank=True, null=True)
 
 	hora_inicio = models.TimeField(auto_now=False, auto_now_add=False)
 	hora_fin = models.TimeField(auto_now=False, auto_now_add=False)

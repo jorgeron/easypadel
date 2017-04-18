@@ -4,7 +4,14 @@
 {% load thumbnail %}
 {% block pagetitle %} Pistas {% endblock %} 
 {% block pageheader %}
-<h1>Mis Pistas</h1> {% endblock %} 
+
+{% if propietario %}
+	<h1>Mis Pistas</h1>
+{% else %}
+	<h1>Pistas</h1>
+{% endif %}
+ {% endblock %} 
+
 {% block pagebody %}
 
 {% for pista in list %}
@@ -26,7 +33,11 @@
 	</div>
 {% endfor %}
 
+{% if propietario %}
 <p><a class="btn btn-success btn-lg" href="{% url 'createPista' %}" role="button">{% bootstrap_icon "plus" %} Añadir pista</a></p>
-
+{% endif %}
+<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+		</button>
 
 {% endblock %} 

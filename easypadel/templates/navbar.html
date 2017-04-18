@@ -33,8 +33,12 @@
                     {% endif %}
 
                     {% if request.user|has_group:"Empresas"%}
-                        <li><a href="{% url 'listPistas' %}">{% bootstrap_icon "list" %} Mis Pistas</a></li>
+                        <li><a href="{% url 'listPistas' request.user.id %}">{% bootstrap_icon "list" %} Mis Pistas</a></li>
                         <li><a href="{% url 'listHorarios' %}">{% bootstrap_icon "list" %} Mis Horarios</a></li>
+                    {% endif %}
+
+                    {% if request.user|has_group:"Jugadores"%}
+                        <li><a href="{% url 'listEmpresas' %}">{% bootstrap_icon "list" %} Empresas</a></li>
                     {% endif %}
 
                     <li class="dropdown">

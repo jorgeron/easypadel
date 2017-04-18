@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^empresa/registration/$', easypadel.views.registroEmpresa, name='registroEmpresa'),
 	url(r'^registroCompleto/(?P<rtype>\d+)$', easypadel.views.registroCompleto, name='registroCompleto'),
 
-    url(r'^empresa/pistas/list$', easypadel.views.listPistas, name='listPistas'),
+    url(r'^empresa/pistas/list/(?P<user_id>[0-9]+)/$', easypadel.views.listPistas, name='listPistas'),
     url(r'^empresa/pistas/create$', easypadel.views.createPista, name='createPista'),
     url(r'^empresa/pistas/edit/(?P<pista_id>[0-9]+)/$', easypadel.views.editPista, name='editPista'),
     url(r'^empresa/pistas/delete/(?P<pista_id>[0-9]+)/$', easypadel.views.deletePista, name='deletePista'),
@@ -39,10 +39,14 @@ urlpatterns = [
     url(r'^empresa/horarios/create$', easypadel.views.createHorario, name='createHorario'),
     url(r'^empresa/horarios/delete/(?P<horario_id>[0-9]+)/$', easypadel.views.deleteHorario, name='deleteHorario'),
     
+    url(r'^empresas/profile/view/(?P<empresa_id>[0-9]+)/$', easypadel.views.viewEmpresa, name='viewEmpresa'),
+    url(r'^empresas/list$', easypadel.views.listEmpresas, name='listEmpresas'),
 
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),
     url(r'^pistas/viewHorarioPista/(?P<pista_id>[0-9]+)/$', easypadel.views.viewHorarioPista, name='viewHorarioPista'),
     url(r'^horarios/view/(?P<horario_id>[0-9]+)/$', easypadel.views.viewHorario, name='viewHorario'),
+
+    url(r'^pistas/alquilar/(?P<franjaHoraria_id>[0-9]+)/$', easypadel.views.alquilarFranja, name='alquilarFranja'),
 
     url(r'^admin/', admin.site.urls),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

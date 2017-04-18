@@ -37,8 +37,39 @@
                 <tr>
                     <td>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</td>
                     <td>{{franjaHoraria.precio}} €</td>
-                    <td class="text-center">{% if franjaHoraria.disponible %} {% bootstrap_icon "ok" %} 
-                    {% else %} {% bootstrap_icon "remove" %} {%endif%}</td>
+                    <td class="text-center">
+                      {% if franjaHoraria.disponible %} 
+                        {% if request.user|has_group:"Jugadores" %}
+                            <a class="btn btn-primary btn-sm" href="#alquilar-franja-{{franjaHoraria.id}}" data-toggle="modal" data-dismiss="modal"> Alquilar</a>
+
+                            <div class="modal fade" id="alquilar-franja-{{franjaHoraria.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">¿Está seguro?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5>¿Está seguro de querer alquilar esta pista?</h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                           
+                                                <a href="{% url 'alquilarFranja' franjaHoraria.id %}" class="btn btn-primary" >Alquilar </button></a>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                        {% bootstrap_icon "ok" %} 
+                        {% endif %}
+                      {% else %} 
+                        {% if franjaHoraria.jugador %} @{{franjaHoraria.jugador.user.username}}
+                        {% else %}
+                        {% bootstrap_icon "remove" %} 
+                        {% endif %}
+                      {%endif%} </td>
                 </tr>
               {% endfor %}
           </table>
