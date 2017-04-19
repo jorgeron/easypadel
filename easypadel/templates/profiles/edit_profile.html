@@ -1,0 +1,41 @@
+{%extends "base.html" %}
+
+{%load static %}
+{%load thumbnail %}
+{%load bootstrap3%}
+{% load groups %}
+
+{%block pagetitle %}Editar perfil{%endblock %}
+
+{% block pageheader %}<h1>Editar perfil</h1>{% endblock %}
+
+{%block pagebody %}
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-3">
+    
+      <div class="text-center">
+        <img title="profile picture" class="img-circle img-responsive" src="{%thumbnail user.foto_perfil|default:'default_profile.png' 140x140 crop %}">
+      </div>
+    </div>
+      
+    <!-- edit form column -->
+    <div class="col-md-9">
+      <h3>Información personal</h3>
+      <form enctype="multipart/form-data" method="post">{% csrf_token %}
+        {%bootstrap_form profile_form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+		{% bootstrap_icon "pencil" %} Enviar
+		</button>
+		<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Cancelar
+		</button>
+		</div>
+		{% endbuttons %}
+      </form>
+    
+</div>
+{%endblock %}
+
+

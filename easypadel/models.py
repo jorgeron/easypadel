@@ -13,6 +13,7 @@ class Actor(models.Model):
     # Add more user profile fields here. Make sure they are nullable
     # or with default values
     foto_perfil = models.ImageField(null=True, blank=True, upload_to='imagenes/perfil_img/%Y-%m-%d/', verbose_name=_('Foto de perfil'))
+    foto_cabecera = models.ImageField(null=True, blank=True, upload_to='imagenes/cabecera_img/%Y-%m-%d/', verbose_name=_('Foto de cabecera'))
     email = models.EmailField(verbose_name=_("Email"), unique=True)
     telefono_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=_("El teléfono debe tener el siguiente formato: '+999999999'. Permitidos hasta 15 dígitos."))
     telefono = models.CharField(validators=[telefono_regex], blank=True, max_length=15,verbose_name=_("Teléfono")) # validators should be a list   

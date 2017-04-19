@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views import generic
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -16,10 +16,20 @@ from django.forms.forms import NON_FIELD_ERRORS
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm
 from django.forms import inlineformset_factory
 
 from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador
+
+
+def get_user_actor(user):
+    if jugadores_group(user):
+        return Jugador.objects.get(user=user)
+    if empresas_group(user):
+        return Empresa.objects.get(user=user)
+    if admin_group(user):
+        return Administrador.objects.get(user=user)
+    raise Exception()
 
 # Create your views here.
 def home(request):
@@ -368,12 +378,6 @@ def listEmpresas(request):
     empresas = Empresa.objects.all()
     return render(request, 'listEmpresas.html', {'list':empresas})
 
-@login_required
-def viewEmpresa(request, empresa_id):
-    empresa = Empresa.objects.get(pk = empresa_id)
-    #editable = (request.user == horario.empresa.user)
-    #franjasHorarias = FranjaHoraria.objects.filter(horario__id = horario_id, asignada=False)
-    return render(request, 'profiles/show_profile_empresa.html', {'empresa':empresa})
 
 @user_passes_test(jugadores_group)
 def alquilarFranja(request, franjaHoraria_id):
@@ -383,3 +387,33 @@ def alquilarFranja(request, franjaHoraria_id):
     franja_horaria.jugador = jugador
     franja_horaria.save()
     return render(request, 'viewPista.html', {'pista':franja_horaria.dia_asignacion.pista})
+
+@login_required
+def viewPerfil(request, username):
+    user = get_object_or_404(User, username=username)
+    show_user = get_user_actor(user)
+    editable = (show_user.user == request.user)
+    #posts = get_page(request, user.post_set.order_by('-timestamp'))
+    return render(request, 'profiles/show_profile.html', {'show_user': show_user, 'editable': editable})
+
+
+
+def chooseProfileForm(instance, *args):
+    if type(instance) is Jugador:
+        return JugadorProfileForm(instance=instance, *args)
+    if type(instance) is Empresa:
+        return EmpresaProfileForm(instance=instance, *args)
+    return ProfileForm(instance=instance, *args)
+
+@login_required
+def editPerfil(request):
+
+    instance = get_user_actor(request.user)
+    if request.method=='POST':
+        form = chooseProfileForm(instance, request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':request.user.username}))
+    else:
+        form = chooseProfileForm(instance)
+    return render(request, 'profiles/edit_profile.html', {'profile_form':form, 'user':instance})

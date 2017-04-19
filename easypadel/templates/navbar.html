@@ -43,10 +43,10 @@
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <img class="img-circle" src="{% if request.user.empresa%} {%thumbnail request.user.empresa.picture|default:'default_profile.png' 24x24 crop %}{%elif request.user.jugador%}{%thumbnail request.user.jugador.picture|default:'default_profile.png' 24x24 crop %}{%else%}{%thumbnail request.user.administrador.picture|default:'default_profile.png' 24x24 crop %}{%endif%}">  {{request.user.username}} <span class="caret"></span>
+                            <img class="img-circle" src="{% if request.user.empresa%} {%thumbnail request.user.empresa.foto_perfil|default:'default_profile.png' 24x24 crop %}{%elif request.user.jugador%}{%thumbnail request.user.jugador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%else%}{%thumbnail request.user.administrador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%endif%}">  {{request.user.username}} <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/profile/{{request.user.username}}">{% bootstrap_icon "user" %} Mi Perfil</a></li>                            
+                            <li><a href="{% url 'viewPerfil' request.user.username %}">{% bootstrap_icon "user" %} Mi Perfil</a></li>                  
                             <li><a href="/logout">{% bootstrap_icon "log-out" %} Salir</a></li>
 
                             

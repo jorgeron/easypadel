@@ -24,6 +24,8 @@ urlpatterns = [
 	url(r'^logout/$', easypadel.views.appLogout, name='logout'),
 
     url(r'^user/delete$', easypadel.views.deleteUser, name='deleteUser'),
+    url(r'^user/profile/view/(?P<username>[\w\-]+)$', easypadel.views.viewPerfil, name='viewPerfil'),
+    url(r'^user/profile/edit$', easypadel.views.editPerfil, name='editPerfil'),
 
 	url(r'^jugador/registration/$', easypadel.views.registroJugador, name='registroJugador'),
     url(r'^administrador/registration/$', easypadel.views.registroAdministrador, name='registroAdministrador'),
@@ -39,7 +41,6 @@ urlpatterns = [
     url(r'^empresa/horarios/create$', easypadel.views.createHorario, name='createHorario'),
     url(r'^empresa/horarios/delete/(?P<horario_id>[0-9]+)/$', easypadel.views.deleteHorario, name='deleteHorario'),
     
-    url(r'^empresas/profile/view/(?P<empresa_id>[0-9]+)/$', easypadel.views.viewEmpresa, name='viewEmpresa'),
     url(r'^empresas/list$', easypadel.views.listEmpresas, name='listEmpresas'),
 
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),

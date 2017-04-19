@@ -9,7 +9,7 @@ from django.utils.html import conditional_escape
 from django.forms import inlineformset_factory
 from datetime import datetime,timedelta
 
-from easypadel.models import Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario
+from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -113,4 +113,26 @@ class FiltroFechasHorariosForm(forms.Form):
 
     fecha_inicio = forms.DateField(initial=hoy, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
     fecha_fin = forms.DateField(initial=hoy_mas_7_dias, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
-    
+
+
+
+class ProfileForm(BaseForm):
+    class Meta:
+        model = Actor
+        fields = ['nombre', 'email', 'telefono', 'descripcion', 'foto_perfil', 'foto_cabecera']
+        widgets = {
+            'foto_perfil': ImageInputWidget,
+            'foto_cabecera': ImageInputWidget,
+        }
+
+class JugadorProfileForm(ProfileForm):
+    class Meta:
+        model = Jugador
+        fields = ['apellidos', 'localidad'] + ProfileForm.Meta.fields
+        widgets = ProfileForm.Meta.widgets
+
+class EmpresaProfileForm(ProfileForm):
+    class Meta:
+        model = Empresa
+        fields = ['direccion'] + ProfileForm.Meta.fields
+        widgets = ProfileForm.Meta.widgets

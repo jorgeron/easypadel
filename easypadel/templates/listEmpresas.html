@@ -12,14 +12,14 @@
 		<div class="panel-body">
 			<div class="media">
 				<div class="media-left">
-					<a href="{% url 'viewEmpresa' empresa.id %}">
+					<a href="{% url 'viewPerfil' empresa.user.username %}">
 								<img class="media-object img-rounded" src="{%thumbnail empresa.foto_perfil|default:'no-image.png' 48x48 crop %}" alt="{{empresa.nombre}}">
 							</a>
 				</div>
 
 
 				<div class="media-body">
-					<h4 class="media-heading"><a href="{% url 'viewEmpresa' empresa.id %}">{{empresa.nombre}}</a></h4>
+					<h4 class="media-heading"><a href="{% url 'viewPerfil' empresa.user.username %}">{{empresa.nombre}}</a></h4>
 				</div>
 			</div>
 		</div>

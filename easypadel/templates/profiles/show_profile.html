@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load thumbnail %}
+{% load groups %}
+
+{% block pagetitle %}{{show_user.username}} - Perfil{% endblock %}
+{% block noheader %}
+
+<header class="header">
+<div class="profile-head" style="background-image:url({%if show_user.foto_cabecera%} {{show_user.foto_cabecera.url}}{%else%}{%static "images/default_header.png"%}{%endif%})">
+  <div class="container">
+      <img title="profile picture" class="profile-image img-responsive pull-left img-circle" src="{% thumbnail show_user.foto_perfil|default:'default_profile.png' 140x140 crop %}">
+      <div class="profile-content pull-left">
+        <h1>{{ show_user.nombre }} {%if show_user.user|has_group:"Jugadores" %} {{show_user.apellidos}} {% endif %}</h1>
+        <h4>@{{ show_user.user.username }}</h4>
+        <h4>{%if show_user.user|has_group:"Empresas" %} {% bootstrap_icon "map-marker" %} {{show_user.direccion}} {% endif %}</h4>
+      </div>
+      {% if request.user.is_authenticated %}
+      <div class="btn-group pull-right">
+        {% if editable %}
+          <a class="btn btn-warning" href="{% url 'editPerfil' %}">{% bootstrap_icon "pencil" %} Editar perfil</a>
+        {% endif %}
+        
+      </div>
+      {% endif %}
+  </div>
+</div>
+</header>
+{% endblock %}
+
+
+
+
+
+{% block pagespecial %}
+<div class="container sections-wrapper">
+  <div class="row">
+    <div class="primary col-md-8 col-sm-12 col-xs-12">
+      <section class="about section">
+        <div class="section-inner">
+          <a class="btn btn-primary btn-sm" href="{% url 'listPistas' show_user.user.id %}">{% bootstrap_icon "list-alt" %} Ver pistas</a>
+          <center><h4>{{show_user.nombre}} no ha publicado ningún post todavía</h4></center>
+          
+        </div>
+      </section>
+    </div>
+    <div class="secondary col-md-4 col-sm-12 col-xs-12">
+      <aside class="section">
+      	<div class="section-inner">
+          <h2 class="heading sr-only">Perfil</h2>
+          <div class="content">
+            <ul class="list-unstyled">
+
+              <li> <h3> {{ show_user.nombre }}{%if show_user.user|has_group:"Jugadores" %} {{show_user.apellidos}} {% endif %} </h3></li>
+
+              <li><strong>{% bootstrap_icon "user" %}</strong> @{{ show_user.user.username }}</li>
+              
+              {%if show_user.user|has_group:"Jugadores" %} 
+                <li><strong>{% bootstrap_icon "calendar" %}</strong> {{ show_user.fecha_nacimiento }}</li>
+                <li><strong>{% bootstrap_icon "certificate" %}</strong> {%if show_user.sexo == 'H'%} Hombre {%else%} Mujer {%endif%}</li>
+                <li><strong>{% bootstrap_icon "map-marker" %}</strong> {{ show_user.localidad }}</li>
+              {% endif %}
+
+              <li><strong>{% bootstrap_icon "envelope" %}</strong> {{ show_user.email }}</li>
+
+              <li><strong>{% bootstrap_icon "earphone" %}</strong> {{ show_user.telefono }}</li>
+
+              {%if show_user.descripcion %}
+              <li><strong>{% bootstrap_icon "user" %}</strong> {{ show_user.descripcion }}</li>
+              {%endif%}
+              
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
