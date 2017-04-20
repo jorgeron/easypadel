@@ -4,8 +4,8 @@
 {% load bootstrap3 %}
 {% load thumbnail %}
 {% load groups %}
-
-{% block pagetitle %}{{show_user.username}} - Perfil{% endblock %}
+{% load posttools %}
+{% block pagetitle %}{{show_user.user.username}} - Perfil{% endblock %}
 {% block noheader %}
 
 <header class="header">
@@ -40,8 +40,28 @@
     <div class="primary col-md-8 col-sm-12 col-xs-12">
       <section class="about section">
         <div class="section-inner">
-          <a class="btn btn-primary btn-sm" href="{% url 'listPistas' show_user.user.id %}">{% bootstrap_icon "list-alt" %} Ver pistas</a>
-          <center><h4>{{show_user.nombre}} no ha publicado ningún post todavía</h4></center>
+          
+          {% if editable %}
+            <form id='form' enctype="multipart/form-data" method='post' action='{% url 'createPost' %}'>
+            {% csrf_token %}
+              {% bootstrap_form postform %}
+              {% buttons %}
+              <button type="submit" class="btn btn-primary">
+              {% bootstrap_icon "plus" %} Crear post
+              </button>
+              {% endbuttons %}
+            </form>
+          {% endif %}
+
+          <h2>Publicaciones</h2>
+          {% for post in posts %}
+            {%postview post request.user%}
+          {% endfor %}
+          {% if posts %}
+            <center>{% bootstrap_pagination posts %}</center>
+          {%else%}
+            <center><h4>{{show_user.nombre}} no ha publicado ningún post todavía.</h4></center>
+          {% endif %}
           
         </div>
       </section>
@@ -71,6 +91,10 @@
               <li><strong>{% bootstrap_icon "user" %}</strong> {{ show_user.descripcion }}</li>
               {%endif%}
               
+              {%if show_user.user|has_group:"Empresas" %} 
+              <a class="btn btn-primary " href="{% url 'listPistas' show_user.user.id %}">{% bootstrap_icon "list-alt" %} Ver pistas</a>
+              {% endif %}
+
             </ul>
           </div>
         </div>

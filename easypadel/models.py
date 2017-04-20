@@ -117,3 +117,15 @@ class FranjaHoraria(models.Model):
 	asignada = models.BooleanField(default=False)
 
 
+class Post(models.Model):
+	user = models.ForeignKey(User)
+
+	texto = models.TextField(max_length=200, null=False)
+	fecha_publicacion = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return self.texto
+
+	class Meta:
+		verbose_name = _("Post")
+		verbose_name_plural = _("Posts")

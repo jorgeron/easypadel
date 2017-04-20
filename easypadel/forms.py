@@ -9,7 +9,7 @@ from django.utils.html import conditional_escape
 from django.forms import inlineformset_factory
 from datetime import datetime,timedelta
 
-from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario
+from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario, Post
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -136,3 +136,12 @@ class EmpresaProfileForm(ProfileForm):
         model = Empresa
         fields = ['direccion'] + ProfileForm.Meta.fields
         widgets = ProfileForm.Meta.widgets
+
+
+class PostForm(BaseForm):
+    class Meta:
+        model = Post
+        fields = ['texto']
+        widgets = {
+          'texto': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }

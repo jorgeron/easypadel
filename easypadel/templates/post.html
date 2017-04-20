@@ -1,0 +1,40 @@
+
+{%load thumbnail %}
+{%load bootstrap3%}
+{% load humanize %}
+{% load groups %}
+<h3 class="title">
+	<a href="{% url 'viewPerfil' post.user.username %}"><img class="img-circle" src="{% if post.user.empresa%} {%thumbnail post.user.empresa.foto_perfil|default:'default_profile.png' 24x24 crop %}{%elif post.user.jugador%}{%thumbnail post.user.jugador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%else%}{%thumbnail post.user.administrador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%endif%}" alt=""> @{{post.user.username}}</a>
+	
+	<small>&bull; {{post.fecha_publicacion|naturaltime}}</small>
+	
+	{%if post.user == user or user|has_group:"Administradores"%}
+		<small><a href="#delete-{{post.id}}"  data-toggle="modal" data-dismiss="modal">{%bootstrap_icon "remove"%}</a></small>
+		<div class="modal fade" id="delete-{{post.id}}">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">¿Está seguro?</h4>
+					</div>
+					<div class="modal-body">
+						<p>¿Está seguro de querer eliminar este post?</p>
+					</div>
+					<div class="modal-footer">
+						<div class="pull-right">
+							<a href="{% url 'deletePost' post.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	{%endif%}
+</h3>
+
+<div class="summary">
+	
+	{% if post.texto != "" %}<p>{{post.texto|urlize}}</p>{% endif %}
+	
+</div>
+<hr class ="divider">

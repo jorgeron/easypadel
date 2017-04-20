@@ -49,5 +49,8 @@ urlpatterns = [
 
     url(r'^pistas/alquilar/(?P<franjaHoraria_id>[0-9]+)/$', easypadel.views.alquilarFranja, name='alquilarFranja'),
 
+    url(r'^post/create$', easypadel.views.createPost, name="createPost"),
+    url(r'^post/delete/(?P<post_id>[0-9]+)/$', easypadel.views.deletePost, name="deletePost"),
+
     url(r'^admin/', admin.site.urls),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

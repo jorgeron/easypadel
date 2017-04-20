@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load groups %}
+{% load posttools %}
+{% load humanize %}
+{% block pagetitle %} Inicio {% endblock %}
+
+{% block pagebody %}
+<div class="row">
+	<div class="col-md-3">
+	
+		<div class="panel panel-default">
+			<div class="panel-heading">{{actor.nombre}}</div>
+			
+			<ul class="list-group">
+				<li class="list-group-item text-right">
+					<a href="{% url 'viewPerfil' actor.user.username %}" class="pull-left"><strong>Posts</strong></a>
+					{{actor.user.post_set.count|intword}}
+				</li>
+				<li class="list-group-item text-right">
+					<a  class="pull-left"><strong>Siguiendo</strong></a>
+					
+				</li>
+				<li class="list-group-item text-right">
+					<a  class="pull-left"><strong>Seguidores</strong></a>
+					
+				</li>
+			</ul>
+		</div>
+		
+	</div>
+	<div class="col-md-6">
+		<form id='form' enctype="multipart/form-data" method='post' action='{% url 'createPost' %}'>
+		{% csrf_token %}
+			{% bootstrap_form postform %}
+			{% buttons %}
+			<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "plus" %} Crear post
+			</button>
+			{% endbuttons %}
+		</form>
+		{% for post in posts %}
+		{% postview post request.user %}
+		{% endfor %}
+		{% if posts %}
+		{% bootstrap_pagination posts %}
+		{% endif %}
+	</div>
+	<div class="col-md-3">
+		
+		
+	</div>
+</div>
+{% endblock %}

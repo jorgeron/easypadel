@@ -9,6 +9,7 @@ from django.http.response import HttpResponseRedirect, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms import formset_factory
 from django.db import IntegrityError
 from datetime import datetime,timedelta
@@ -16,10 +17,10 @@ from django.forms.forms import NON_FIELD_ERRORS
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post
 
 
 def get_user_actor(user):
@@ -30,6 +31,18 @@ def get_user_actor(user):
     if admin_group(user):
         return Administrador.objects.get(user=user)
     raise Exception()
+
+def get_page(request, queryset, howmany=8):
+    paginator = Paginator(queryset, howmany)
+    page = request.GET.get('page')
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        return paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        return paginator.page(paginator.num_pages)
 
 # Create your views here.
 def home(request):
@@ -48,7 +61,11 @@ def home(request):
         return render(request, 'home.html', {'form':form})
 
     else:
-        return render(request, 'timeline.html')
+        user = User.objects.get(pk = request.user.id)
+        #posts = get_page(request, Post.objects.filter(Q(user=user) | Q(user__followers__source=request.user)).order_by('-timestamp').distinct())
+        posts = get_page(request, Post.objects.filter(user=user).order_by('-fecha_publicacion').distinct())
+
+        return render(request, 'inicio.html', {'actor':get_user_actor(user), 'postform': PostForm(), 'posts':posts})
 
 
 
@@ -393,8 +410,8 @@ def viewPerfil(request, username):
     user = get_object_or_404(User, username=username)
     show_user = get_user_actor(user)
     editable = (show_user.user == request.user)
-    #posts = get_page(request, user.post_set.order_by('-timestamp'))
-    return render(request, 'profiles/show_profile.html', {'show_user': show_user, 'editable': editable})
+    posts = get_page(request, user.post_set.order_by('-fecha_publicacion'))
+    return render(request, 'profiles/show_profile.html', {'show_user': show_user, 'editable': editable, 'posts':posts, 'postform': PostForm()})
 
 
 
@@ -407,7 +424,6 @@ def chooseProfileForm(instance, *args):
 
 @login_required
 def editPerfil(request):
-
     instance = get_user_actor(request.user)
     if request.method=='POST':
         form = chooseProfileForm(instance, request.POST, request.FILES)
@@ -417,3 +433,33 @@ def editPerfil(request):
     else:
         form = chooseProfileForm(instance)
     return render(request, 'profiles/edit_profile.html', {'profile_form':form, 'user':instance})
+
+
+@login_required
+def createPost(request):
+    rightNow = datetime.now()
+    
+    if request.method=='POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.timestamp = rightNow
+            new_post.user = request.user
+            '''urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', new_post.text)
+            for url in urls:
+                if re.search("(http://)?(www\.)?(youtube|yimg|youtu)\.([A-Za-z]{2,4}|[A-Za-z]{2}\.[A-Za-z]{2})/(watch\?v=)?[A-Za-z0-9\-_]{6,12}(&[A-Za-z0-9\-_]{1,}=[A-Za-z0-9\-_]{1,})*", url) or re.search("vimeo\.com/(\d+)", url) or "soundcloud" in url: #"youtube" or "youtu.be" or "vimeo" or "soundcloud" in url:
+                    new_post.video = url
+                    break'''
+            new_post.save()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    raise Http404()
+
+@login_required
+def deletePost(request, post_id):
+    post = Post.objects.get(pk = post_id)
+    if(request.user == post.user or request.user.groups.filter(name='Administradores').exists()):
+        post.delete()
+    else:
+        raise Http404("No tiene permiso para eliminar este post.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    
