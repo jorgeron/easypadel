@@ -14,6 +14,7 @@ from django.forms import formset_factory
 from django.db import IntegrityError
 from datetime import datetime,timedelta
 from django.forms.forms import NON_FIELD_ERRORS
+import re
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
@@ -443,13 +444,13 @@ def createPost(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             new_post = form.save(commit=False)
-            new_post.timestamp = rightNow
+            new_post.fecha_publicacion = rightNow
             new_post.user = request.user
-            '''urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', new_post.text)
+            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', new_post.texto)
             for url in urls:
                 if re.search("(http://)?(www\.)?(youtube|yimg|youtu)\.([A-Za-z]{2,4}|[A-Za-z]{2}\.[A-Za-z]{2})/(watch\?v=)?[A-Za-z0-9\-_]{6,12}(&[A-Za-z0-9\-_]{1,}=[A-Za-z0-9\-_]{1,})*", url) or re.search("vimeo\.com/(\d+)", url) or "soundcloud" in url: #"youtube" or "youtu.be" or "vimeo" or "soundcloud" in url:
                     new_post.video = url
-                    break'''
+                    break
             new_post.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     raise Http404()

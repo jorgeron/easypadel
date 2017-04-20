@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator
-
+from embed_video.fields import EmbedVideoField
 
 
 # Create your models here.
@@ -122,10 +122,12 @@ class Post(models.Model):
 
 	texto = models.TextField(max_length=200, null=False)
 	fecha_publicacion = models.DateTimeField(auto_now=True)
+	foto = models.ImageField(null=True, blank=True, upload_to='post_pics/%Y-%m-%d/', verbose_name='Foto')
+	video = EmbedVideoField(null=True, blank=True)
 
 	def __unicode__(self):
 		return self.texto
 
 	class Meta:
-		verbose_name = _("Post")
-		verbose_name_plural = _("Posts")
+		verbose_name='Post'
+		verbose_name_plural='Posts'

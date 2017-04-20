@@ -3,6 +3,7 @@
 {%load bootstrap3%}
 {% load humanize %}
 {% load groups %}
+{% load embed_video_tags %}
 <h3 class="title">
 	<a href="{% url 'viewPerfil' post.user.username %}"><img class="img-circle" src="{% if post.user.empresa%} {%thumbnail post.user.empresa.foto_perfil|default:'default_profile.png' 24x24 crop %}{%elif post.user.jugador%}{%thumbnail post.user.jugador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%else%}{%thumbnail post.user.administrador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%endif%}" alt=""> @{{post.user.username}}</a>
 	
@@ -33,8 +34,17 @@
 </h3>
 
 <div class="summary">
-	
+	{% if post.foto %}
+	<a href="{{post.foto.url}}" class="thumbnail text-center" target="_blank">
+		<img src="{% thumbnail post.foto 512x288 %}" class="img-responsive" alt="Foto">
+	{% endif %}
 	{% if post.texto != "" %}<p>{{post.texto|urlize}}</p>{% endif %}
+	{% if post.foto %}
+	</a>
+	{% endif %}
+	{% if post.video %}
+	<center>{% video post.video 'small' %}</center>
+	{% endif%}
 	
 </div>
 <hr class ="divider">

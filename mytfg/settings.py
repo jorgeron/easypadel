@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'embed_video',
     'bootstrap3',
     'easy_thumbnails',
     'datetimewidget',

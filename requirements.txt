@@ -4,3 +4,4 @@ Pillow
 django-datetime-widget
 easy_thumbnails
 django_bootstrap_dynamic_formsets
+django-embed-video
