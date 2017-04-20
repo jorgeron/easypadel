@@ -143,5 +143,8 @@ class PostForm(BaseForm):
         model = Post
         fields = ['texto']
         widgets = {
-          'texto': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'texto': forms.Textarea(attrs={'rows':4, 'cols':15, 'style':'resize:none;', 'placeholder':'Introduzca el texto aquí. Máximo 200 caracteres.'}),
         }
+    def __init__(self, *args, **kwargs):
+        super(PostForm, self).__init__(*args, **kwargs)
+        self.fields['texto'].label = ''
