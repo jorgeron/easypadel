@@ -131,3 +131,10 @@ class Post(models.Model):
 	class Meta:
 		verbose_name='Post'
 		verbose_name_plural='Posts'
+
+
+class Seguimiento(models.Model):
+    origen = models.ForeignKey(User, related_name="siguiendo")
+    destino = models.ForeignKey(User, related_name="seguidores")
+    class Meta:
+        unique_together = (('origen','destino'))

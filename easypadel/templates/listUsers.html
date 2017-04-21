@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load thumbnail %}
+{% block pagetitle %} Usuarios {% endblock %} 
+{% block pageheader %}
+<h1>Usuarios</h1> {% endblock %} 
+{% block pagebody %}
+
+{% for actor in list %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="media">
+				<div class="media-left">
+					<a href="{% url 'viewPerfil' actor.user.username %}">
+								<img class="media-object img-rounded" src="{%thumbnail actor.foto_perfil|default:'no-image.png' 48x48 crop %}" alt="{{actor.nombre}}">
+							</a>
+				</div>
+
+
+				<div class="media-body">
+					<h4 class="media-heading"><a href="{% url 'viewPerfil' actor.user.username %}">{{actor.nombre}}</a></h4>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+
+{% endblock %} 

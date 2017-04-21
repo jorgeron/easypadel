@@ -14,6 +14,7 @@ from django.forms import formset_factory
 from django.db import IntegrityError
 from datetime import datetime,timedelta
 from django.forms.forms import NON_FIELD_ERRORS
+from django.db.models import Q
 import re
 
 
@@ -21,7 +22,7 @@ from easypadel.decorators import anonymous_required, admin_group, jugadores_grou
 from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento
 
 
 def get_user_actor(user):
@@ -63,8 +64,8 @@ def home(request):
 
     else:
         user = User.objects.get(pk = request.user.id)
-        #posts = get_page(request, Post.objects.filter(Q(user=user) | Q(user__followers__source=request.user)).order_by('-timestamp').distinct())
-        posts = get_page(request, Post.objects.filter(user=user).order_by('-fecha_publicacion').distinct())
+        posts = get_page(request, Post.objects.filter(Q(user=user) | Q(user__seguidores__origen=request.user)).order_by('-fecha_publicacion').distinct())
+        #posts = get_page(request, Post.objects.filter(user=user).order_by('-fecha_publicacion').distinct())
 
         return render(request, 'inicio.html', {'actor':get_user_actor(user), 'postform': PostForm(), 'posts':posts})
 
@@ -412,7 +413,8 @@ def viewPerfil(request, username):
     show_user = get_user_actor(user)
     editable = (show_user.user == request.user)
     posts = get_page(request, user.post_set.order_by('-fecha_publicacion'))
-    return render(request, 'profiles/show_profile.html', {'show_user': show_user, 'editable': editable, 'posts':posts, 'postform': PostForm()})
+    return render(request, 'profiles/show_profile.html', {'show_user': show_user, 
+        'editable': editable, 'posts':posts, 'postform': PostForm()})
 
 
 
@@ -464,3 +466,41 @@ def deletePost(request, post_id):
         raise Http404("No tiene permiso para eliminar este post.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
+
+
+@login_required
+def seguirUsuario(request, username):
+    user = get_object_or_404(User, username=username)
+    if user==request.user or Seguimiento.objects.filter(origen = request.user, destino = user).exists():
+        return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':user.username}))
+    seguimiento = Seguimiento(origen = request.user, destino = user)
+    seguimiento.save()
+    return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':user.username}))
+
+@login_required
+def dejarSeguirUsuario(request, username):
+    user = get_object_or_404(User, username=username)
+    if user==request.user or not Seguimiento.objects.filter(origen = request.user, destino = user).exists():
+        return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':user.username}))
+    seguimiento = Seguimiento.objects.filter(origen = request.user, destino = user)
+    seguimiento.delete()
+    return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':user.username}))
+
+@login_required
+def viewSeguidores(request, username):
+    user = get_object_or_404(User, username=username)
+    followers = Seguimiento.objects.filter(destino = user)
+    seguidores = []
+    for seguidor in followers:
+        seguidores.append(get_user_actor(seguidor.origen))
+    return render(request, 'listUsers.html', {'list':seguidores})
+
+
+@login_required
+def viewSiguiendo(request, username):
+    user = get_object_or_404(User, username=username)
+    following = Seguimiento.objects.filter(origen = user)
+    siguiendo = []
+    for seguido in following:
+        siguiendo.append(get_user_actor(seguido.destino))
+    return render(request, 'listUsers.html', {'list':siguiendo})

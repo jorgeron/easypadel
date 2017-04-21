@@ -20,12 +20,12 @@
 					{{actor.user.post_set.count|intword}}
 				</li>
 				<li class="list-group-item text-right">
-					<a  class="pull-left"><strong>Siguiendo</strong></a>
-					
+					<a  class="pull-left" href="{% url 'viewSiguiendo' actor.user.username %}"><strong>Siguiendo</strong></a>
+					{{actor.user.siguiendo.count|intword}}
 				</li>
 				<li class="list-group-item text-right">
-					<a  class="pull-left"><strong>Seguidores</strong></a>
-					
+					<a  class="pull-left" href="{% url 'viewSeguidores' actor.user.username %}"><strong>Seguidores</strong></a>
+					{{actor.user.seguidores.count|intword}}
 				</li>
 			</ul>
 		</div>
