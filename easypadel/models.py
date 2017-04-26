@@ -138,3 +138,43 @@ class Seguimiento(models.Model):
     destino = models.ForeignKey(User, related_name="seguidores")
     class Meta:
         unique_together = (('origen','destino'))
+
+
+class Propuesta(models.Model):
+
+	ESTADOS = ( 
+		('ABIERTA', 'Abierta'), 
+		('CERRADA', 'Cerrada'), 
+		('CANCELADA', 'Cancelada')
+		)
+
+	TIPOS_PARTIDO = (
+		('MASCULINO', 'Masculino'),
+		('FEMENINO', 'Femenino'),
+		('MIXTO', 'Mixto')
+		)
+
+	creador = models.ForeignKey(Jugador, related_name='creador')
+
+	titulo = models.CharField(max_length=30)
+	descripcion = models.TextField(max_length=500, blank=True, null= True)
+	fecha_publicacion = models.DateTimeField(auto_now=True)
+	fecha_limite = models.DateTimeField(auto_now=False)
+	fecha_partido = models.DateTimeField(auto_now=False)
+	estado = models.CharField(max_length=9, choices=ESTADOS)
+	tipo_partido = models.CharField(max_length=9, choices=TIPOS_PARTIDO)
+	sitio = models.CharField(max_length=20, blank=True, null= True)
+
+	def __unicode__(self):
+		return self.titulo
+
+	class Meta:
+		verbose_name='Propuesta'
+		verbose_name_plural='Propuestas'
+
+
+class Participante(models.Model):
+    jugador = models.ForeignKey(Jugador)
+    propuesta = models.ForeignKey(Propuesta)
+    class Meta:
+        unique_together = (('jugador','propuesta'))
