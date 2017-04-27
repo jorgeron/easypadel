@@ -19,10 +19,10 @@ import re
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento, Propuesta, Participante
 
 
 def get_user_actor(user):
@@ -212,7 +212,7 @@ def editPista(request, pista_id):
 def deletePista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
     pista.delete()
-    return listPistas(request)
+    return listPistas(request, request.user.id)
 
 @user_passes_test(empresas_group)
 def createPista(request):
@@ -231,7 +231,7 @@ def createPista(request):
             new_pista = form.save(commit=False)
             new_pista.empresa_id = empresa_id
             new_pista.save()    
-            return HttpResponseRedirect(reverse('listPistas'))
+            return HttpResponseRedirect(reverse('listPistas', kwargs={'user_id':request.user.id}))
     else:
         form = PistaForm()
     return render(request, 'form.html', {'form':form, 'class':_('Pista'), 'operation':_('Crear')})
@@ -504,3 +504,69 @@ def viewSiguiendo(request, username):
     for seguido in following:
         siguiendo.append(get_user_actor(seguido.destino))
     return render(request, 'listUsers.html', {'list':siguiendo})
+
+
+
+
+@user_passes_test(jugadores_group)
+def createPropuesta(request):
+    if request.method=='POST':
+        rightNow = datetime.now()
+
+        form = PropuestaForm(request.POST)
+        if form.is_valid():
+            fecha_partido = form.cleaned_data['fecha_partido']
+            fecha_limite = form.cleaned_data['fecha_limite']
+            fecha_partido = fecha_partido.replace(tzinfo=None)
+            fecha_limite = fecha_limite.replace(tzinfo=None)
+            fecha_publicacion = rightNow
+            if validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
+                new_propuesta = form.save(commit=False)
+                new_propuesta.creador = Jugador.objects.get(user = request.user)
+                new_propuesta.estado = 'ABIERTA'
+                new_propuesta.fecha_publicacion = fecha_publicacion
+                new_propuesta.save()    
+                return HttpResponseRedirect(reverse('listPropuestasCreadas', kwargs={'user_id':request.user.id}))
+            else:
+                form.full_clean()
+                form._errors[NON_FIELD_ERRORS] = form.error_class(['Las fechas no son correctas'])
+                return render(request, 'form.html', {'form':form, 'class':_('Propuesta'), 'operation':_('Crear')})
+
+    else:
+        form = PropuestaForm()
+    return render(request, 'form.html', {'form':form, 'class':_('Propuesta'), 'operation':_('Crear')})
+
+
+def validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
+    valido = (fecha_publicacion <= fecha_partido-timedelta(hours=2))
+    valido = (valido and fecha_limite <= fecha_partido-timedelta(hours=1))
+    valido = (valido and fecha_limite > fecha_publicacion)
+    return valido
+
+
+def listPropuestasCreadas(request, user_id):
+    jugador = Jugador.objects.get(user = request.user)
+    propuestas_creadas = Propuesta.objects.filter(creador = jugador)
+    return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})
+
+
+@user_passes_test(jugadores_group)
+def deletePropuesta(request, propuesta_id):
+    propuesta = Propuesta.objects.get(pk = propuesta_id)
+    jugador = Jugador.objects.get(user = request.user)
+    participantes = Participante.objects.filter(propuesta_id = propuesta.id)
+    #si no hay participantes, se puede eliminar
+    if propuesta.creador == jugador and not participantes:
+        propuesta.delete()
+    else:
+        raise Http404("No tiene permiso para eliminar esta propuesta.")
+    return listPropuestasCreadas(request, request.user.id)
+
+
+@login_required
+def viewPropuesta(request, propuesta_id):
+    propuesta = Propuesta.objects.get(pk = propuesta_id)
+    participantes = Participante.objects.filter(propuesta_id = propuesta_id)
+    creador = (request.user == propuesta.creador.user)
+    borrable = creador and not participantes
+    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'borrable':borrable})

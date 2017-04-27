@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load thumbnail %}
+{% block pagetitle %} Propuestas {% endblock %} 
+{% block pageheader %}
+
+{% if creador %}
+	<h1>Mis Propuestas</h1>
+{% else %}
+	<h1>Propuestas</h1>
+{% endif %}
+ {% endblock %} 
+
+{% block pagebody %}
+
+{% for propuesta in list %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="media">
+				
+
+
+				<div class="media-body">
+					
+					<h4 class="media-heading"><a href="{% url 'viewPropuesta' propuesta.id %}">{{propuesta.titulo}}</a></h4>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+
+<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+		</button>
+
+{% endblock %} 

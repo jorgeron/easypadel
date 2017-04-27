@@ -9,7 +9,7 @@ from django.utils.html import conditional_escape
 from django.forms import inlineformset_factory
 from datetime import datetime,timedelta
 
-from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario, Post
+from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario, Post, Propuesta
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -149,3 +149,13 @@ class PostForm(BaseForm):
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
         self.fields['texto'].label = ''
+
+
+class PropuestaForm(BaseForm):
+    class Meta:
+        model = Propuesta
+        fields = ['titulo', 'descripcion', 'fecha_partido', 'fecha_limite', 'tipo_partido', 'sitio']
+        widgets = {
+          'fecha_partido': DateTimeWidget(usel10n = True, bootstrap_version=3),
+          'fecha_limite': DateTimeWidget(usel10n = True, bootstrap_version=3),
+        }

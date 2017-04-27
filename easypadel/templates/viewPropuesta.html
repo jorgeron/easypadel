@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load groups %}
+
+{% load posttools %}
+{% load countdown %}
+{% load bootstrap3 %}
+{% load embed_video_tags %}
+{% load humanize %}
+{% load thumbnail %}
+{% block pagetitle %}{{propuesta.titulo}}{% endblock %}
+{% block pageheader %}<h1>{{propuesta.titulo}}</h1>{% endblock %}
+{% block pagebody %}
+{% if creador and borrable %}
+<div class="row text-center">
+	<a class="btn btn-danger" data-toggle="modal" data-dismiss="modal" href="#confirm-delete">{% bootstrap_icon "remove" %} Eliminar</a>
+	<div class="modal fade" id="confirm-delete">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">¿Está seguro?</h4>
+				</div>
+				<div class="modal-body">
+					<p>¿Está seguro de querer eliminar la propuesta?</p>
+				</div>
+				<div class="modal-footer">
+					<div class="pull-right">
+						<a href="{% url 'deletePropuesta' propuesta.id %}" class="btn btn-danger">{% bootstrap_icon "remove" %} Eliminar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+<div class="row">
+	<div class="col-md-7">
+
+		<p><strong>Creador</strong> <a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a> ({{propuesta.creador.nombre}} {{propuesta.creador.apellidos}})</p>
+
+		<p><strong>Fecha del partido</strong> {{propuesta.fecha_partido}}</p>
+		{% if propuesta.sitio %}
+		<p><strong>Sitio</strong> {{propuesta.sitio}}</p>
+		{% endif %}
+	</div>
+	{% if propuesta.estado == 'ABIERTA' %}
+	<div class="col-md-5 text-center">
+		<div class="alert">
+			<p><strong>Fecha límite</strong> {{propuesta.fecha_limite}}</p>
+			{% countdown "countdown-propuesta" %}
+		</div>
+	</div>
+	{% endif %}
+</div>
+<div class="row col-md-12">
+	<p><strong>Descripción</strong> {{propuesta.descripcion|linebreaksbr}}</p>
+</div>
+
+
+{% if propuesta.estado == 'ABIERTA' %}
+<script type="text/javascript">
+	initializeClock('countdown-propuesta', new Date("{{propuesta.fecha_limite.isoformat}}"));
+</script>
+{% endif %}
+
+
+{% endblock %}

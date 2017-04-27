@@ -39,6 +39,7 @@
 
                     {% if request.user|has_group:"Jugadores"%}
                         <li><a href="{% url 'listEmpresas' %}">{% bootstrap_icon "list" %} Empresas</a></li>
+                        <li><a href="{% url 'createPropuesta' %}">{% bootstrap_icon "plus" %} Crear propuesta</a></li>
                     {% endif %}
 
                     <li class="dropdown">
