@@ -526,7 +526,7 @@ def createPropuesta(request):
                 new_propuesta.estado = 'ABIERTA'
                 new_propuesta.fecha_publicacion = fecha_publicacion
                 new_propuesta.save()    
-                return HttpResponseRedirect(reverse('listPropuestasCreadas', kwargs={'user_id':request.user.id}))
+                return HttpResponseRedirect(reverse('listPropuestas', kwargs={'username':request.user.username}))
             else:
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Las fechas no son correctas'])
@@ -544,9 +544,22 @@ def validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
     return valido
 
 
-def listPropuestasCreadas(request, user_id):
+'''def listPropuestasCreadas(request, username):
     jugador = Jugador.objects.get(user = request.user)
     propuestas_creadas = Propuesta.objects.filter(creador = jugador)
+    return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})'''
+
+def listPropuestas(request, username):
+    jugador = Jugador.objects.get(user = request.user)
+    propuestas = []
+    propuestas_creadas = Propuesta.objects.filter(creador = jugador)
+    propuestas_participaciones = Participante.objects.filter(jugador = jugador)
+
+    for p in propuestas_creadas:
+        propuestas.append(p)
+    for p in propuestas_participaciones:
+        propuestas.append(p)
+
     return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})
 
 
@@ -560,7 +573,7 @@ def deletePropuesta(request, propuesta_id):
         propuesta.delete()
     else:
         raise Http404("No tiene permiso para eliminar esta propuesta.")
-    return listPropuestasCreadas(request, request.user.id)
+    return listPropuestas(request, request.user.username)
 
 
 @login_required
@@ -569,4 +582,24 @@ def viewPropuesta(request, propuesta_id):
     participantes = Participante.objects.filter(propuesta_id = propuesta_id)
     creador = (request.user == propuesta.creador.user)
     borrable = creador and not participantes
-    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'borrable':borrable})
+    participante = False
+    for p in participantes:
+        if p.jugador.user == request.user:
+            participante = True
+    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'participante':participante, 'borrable':borrable, 'participantes':participantes})
+
+
+@user_passes_test(jugadores_group)
+def apuntarsePartido(request, propuesta_id):
+    propuesta = Propuesta.objects.get(pk = propuesta_id)
+    participantes = Participante.objects.filter(propuesta_id = propuesta_id)
+    jugador = Jugador.objects.get(user = request.user)
+
+    if len(participantes) < 3 and propuesta.creador != jugador and propuesta.estado == 'ABIERTA':
+        participante = Participante(propuesta = propuesta, jugador = jugador)
+        participante.save()
+    else:
+        raise Http404("No tiene permiso para unirse a este partido")
+
+    return viewPropuesta(request, propuesta_id)
+

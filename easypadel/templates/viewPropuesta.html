@@ -43,6 +43,13 @@
 		{% if propuesta.sitio %}
 		<p><strong>Sitio</strong> {{propuesta.sitio}}</p>
 		{% endif %}
+		{% if participantes %}
+		<p><strong>Participantes</strong>
+			{% for participante in participantes %}
+				<a href="{% url 'viewPerfil' participante.jugador.user.username %}">@{{participante.jugador.user.username}}</a></br>
+			{% endfor %}
+		</p>
+		{% endif %}
 	</div>
 	{% if propuesta.estado == 'ABIERTA' %}
 	<div class="col-md-5 text-center">
@@ -50,6 +57,11 @@
 			<p><strong>Fecha límite</strong> {{propuesta.fecha_limite}}</p>
 			{% countdown "countdown-propuesta" %}
 		</div>
+		{% if participantes.count < 3 and not creador and not participante %}
+		<div>
+			<a href="{% url 'apuntarsePartido' propuesta.id %}" class="btn btn-success ">{%bootstrap_icon "plus" %} Unirse!</a>
+		</div>
+		{% endif %}
 	</div>
 	{% endif %}
 </div>

@@ -58,9 +58,10 @@ urlpatterns = [
     url(r'^post/delete/(?P<post_id>[0-9]+)/$', easypadel.views.deletePost, name="deletePost"),
 
     url(r'^propuesta/create$', easypadel.views.createPropuesta, name="createPropuesta"),
-    url(r'^propuesta/list/creadas/(?P<user_id>[0-9]+)/$', easypadel.views.listPropuestasCreadas, name='listPropuestasCreadas'),
+    url(r'^propuesta/list/(?P<username>[\w\-]+)$', easypadel.views.listPropuestas, name='listPropuestas'),
     url(r'^propuesta/delete/(?P<propuesta_id>[0-9]+)/$', easypadel.views.deletePropuesta, name="deletePropuesta"),
     url(r'^propuesta/view/(?P<propuesta_id>[0-9]+)/$', easypadel.views.viewPropuesta, name="viewPropuesta"),
+    url(r'^propuesta/join/(?P<propuesta_id>[0-9]+)/$', easypadel.views.apuntarsePartido, name="apuntarsePartido"),
 
     url(r'^admin/', admin.site.urls),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
