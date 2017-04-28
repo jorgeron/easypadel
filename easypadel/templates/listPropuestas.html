@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load static %}
+{% load propuestatools %}
 {% load thumbnail %}
 {% block pagetitle %} Propuestas {% endblock %} 
 {% block pageheader %}
@@ -14,22 +15,19 @@
 
 {% block pagebody %}
 
+<div class="row">
+  <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+  	<ul class="event-list">
+
 {% for propuesta in list %}
-	<div class="panel panel-default">
-		<div class="panel-body">
-			<div class="media">
-				
 
+	<li>{% propuestaview propuesta request.user %}</li>
 
-				<div class="media-body">
-					
-					<h4 class="media-heading"><a href="{% url 'viewPropuesta' propuesta.id %}">{{propuesta.titulo}}</a></h4>
-				</div>
-			</div>
-		</div>
-	</div>
 {% endfor %}
 
+	</ul>
+  </div>
+</div>
 
 <button class="btn btn-danger" onClick="window.history.back();return false;">
 		{% bootstrap_icon "chevron-left" %} Volver

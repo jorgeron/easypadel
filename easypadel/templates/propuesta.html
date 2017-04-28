@@ -1,0 +1,16 @@
+{%load thumbnail %}
+{%load bootstrap3%}
+{% load humanize %}
+{% load groups %}
+{% load calendartools %}
+
+<time datetime="2014-07-20">
+	<span class="day">{{propuesta.fecha_partido.day}}</span>
+	<span class="month">{{12|month_name }}</span>
+	<span class="year">{{propuesta.fecha_partido.year }}</span>
+	<span class="time">{{propuesta.fecha_partido.time }}</span>
+</time>
+<div class="info">
+	<h2 class="title">{{propuesta.titulo}}</h2>
+	<p class="desc">{{propuesta.descripcion}}</p>
+</div>

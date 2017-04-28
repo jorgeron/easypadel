@@ -156,6 +156,7 @@ class PropuestaForm(BaseForm):
         model = Propuesta
         fields = ['titulo', 'descripcion', 'fecha_partido', 'fecha_limite', 'tipo_partido', 'sitio']
         widgets = {
+          'descripcion': forms.Textarea(attrs={'rows':4, 'cols':15, 'style':'resize:none;'}),
           'fecha_partido': DateTimeWidget(usel10n = True, bootstrap_version=3),
           'fecha_limite': DateTimeWidget(usel10n = True, bootstrap_version=3),
         }
