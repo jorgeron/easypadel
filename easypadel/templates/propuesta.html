@@ -4,13 +4,25 @@
 {% load groups %}
 {% load calendartools %}
 
-<time datetime="2014-07-20">
+<time datetime="{{propuesta.fecha_partido}}">
 	<span class="day">{{propuesta.fecha_partido.day}}</span>
-	<span class="month">{{12|month_name }}</span>
+	<span class="month">{{propuesta.fecha_partido.month|month_name }}</span>
 	<span class="year">{{propuesta.fecha_partido.year }}</span>
-	<span class="time">{{propuesta.fecha_partido.time }}</span>
+	<span class="time">{% bootstrap_icon "time" %} {{propuesta.fecha_partido.time }}</span>
 </time>
 <div class="info">
 	<h2 class="title">{{propuesta.titulo}}</h2>
 	<p class="desc">{{propuesta.descripcion}}</p>
+	
+
+		<ul>
+			<li style="width:33%;">{% bootstrap_icon "user" %} {{propuesta.tipo_partido}}</li>
+			{% if propuesta.sitio %}
+			<li style="width:33%;">{% bootstrap_icon "map-marker" %} {{propuesta.sitio}}</li>
+			{% else %}
+			<li style="width:33%;"> </li>
+			{% endif %}
+			<li style="width:33%;"><a href="{% url 'viewPropuesta' propuesta.id %}" class="btn btn-primary ">{%bootstrap_icon "eye-open" %} Ver</a></li>
+		</ul>
+
 </div>

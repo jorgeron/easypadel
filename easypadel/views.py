@@ -523,7 +523,6 @@ def createPropuesta(request):
             if validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
                 new_propuesta = form.save(commit=False)
                 new_propuesta.creador = Jugador.objects.get(user = request.user)
-                new_propuesta.estado = 'ABIERTA'
                 new_propuesta.fecha_publicacion = fecha_publicacion
                 new_propuesta.save()    
                 return HttpResponseRedirect(reverse('listPropuestas', kwargs={'username':request.user.username}))
@@ -558,9 +557,10 @@ def listPropuestas(request, username):
     for p in propuestas_creadas:
         propuestas.append(p)
     for p in propuestas_participaciones:
-        propuestas.append(p)
+        propuestas.append(p.propuesta)
 
-    return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})
+    propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
+    return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':True})
 
 
 @user_passes_test(jugadores_group)
@@ -582,11 +582,13 @@ def viewPropuesta(request, propuesta_id):
     participantes = Participante.objects.filter(propuesta_id = propuesta_id)
     creador = (request.user == propuesta.creador.user)
     borrable = creador and not participantes
+
+    fecha_limite_futura = fechaLimiteFutura(propuesta)
     participante = False
     for p in participantes:
         if p.jugador.user == request.user:
             participante = True
-    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'participante':participante, 'borrable':borrable, 'participantes':participantes})
+    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'participante':participante, 'borrable':borrable, 'participantes':participantes, 'fecha_limite_futura':fecha_limite_futura})
 
 
 @user_passes_test(jugadores_group)
@@ -594,8 +596,9 @@ def apuntarsePartido(request, propuesta_id):
     propuesta = Propuesta.objects.get(pk = propuesta_id)
     participantes = Participante.objects.filter(propuesta_id = propuesta_id)
     jugador = Jugador.objects.get(user = request.user)
+    rightNow = datetime.now()
 
-    if len(participantes) < 3 and propuesta.creador != jugador and propuesta.estado == 'ABIERTA':
+    if len(participantes) < 3 and propuesta.creador != jugador and fechaLimiteFutura(propuesta):
         participante = Participante(propuesta = propuesta, jugador = jugador)
         participante.save()
     else:
@@ -603,3 +606,8 @@ def apuntarsePartido(request, propuesta_id):
 
     return viewPropuesta(request, propuesta_id)
 
+
+def fechaLimiteFutura(propuesta):
+    rightNow = datetime.now()
+    limite = propuesta.fecha_limite.replace(tzinfo=None)
+    return rightNow < limite

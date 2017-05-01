@@ -142,12 +142,6 @@ class Seguimiento(models.Model):
 
 class Propuesta(models.Model):
 
-	ESTADOS = ( 
-		('ABIERTA', 'Abierta'), 
-		('CERRADA', 'Cerrada'), 
-		('CANCELADA', 'Cancelada')
-		)
-
 	TIPOS_PARTIDO = (
 		('MASCULINO', 'Masculino'),
 		('FEMENINO', 'Femenino'),
@@ -157,11 +151,10 @@ class Propuesta(models.Model):
 	creador = models.ForeignKey(Jugador, related_name='creador')
 
 	titulo = models.CharField(max_length=30)
-	descripcion = models.TextField(max_length=500, blank=True, null= True)
+	descripcion = models.TextField(max_length=200, blank=True, null= True)
 	fecha_publicacion = models.DateTimeField(auto_now=True)
 	fecha_limite = models.DateTimeField(auto_now=False)
 	fecha_partido = models.DateTimeField(auto_now=False)
-	estado = models.CharField(max_length=9, choices=ESTADOS)
 	tipo_partido = models.CharField(max_length=9, choices=TIPOS_PARTIDO)
 	sitio = models.CharField(max_length=20, blank=True, null= True)
 
@@ -175,6 +168,6 @@ class Propuesta(models.Model):
 
 class Participante(models.Model):
     jugador = models.ForeignKey(Jugador)
-    propuesta = models.ForeignKey(Propuesta)
+    propuesta = models.ForeignKey(Propuesta, related_name='participantes')
     class Meta:
         unique_together = (('jugador','propuesta'))

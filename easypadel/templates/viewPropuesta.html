@@ -9,8 +9,12 @@
 {% load humanize %}
 {% load thumbnail %}
 {% block pagetitle %}{{propuesta.titulo}}{% endblock %}
-{% block pageheader %}<h1>{{propuesta.titulo}}</h1>{% endblock %}
+{% block pageheader %}<h1>{{propuesta.titulo}}</h1>
+<h1>{% bootstrap_icon "time" %} {{propuesta.fecha_partido}}</h1>
+{% endblock %}
 {% block pagebody %}
+
+
 {% if creador and borrable %}
 <div class="row text-center">
 	<a class="btn btn-danger" data-toggle="modal" data-dismiss="modal" href="#confirm-delete">{% bootstrap_icon "remove" %} Eliminar</a>
@@ -37,40 +41,65 @@
 <div class="row">
 	<div class="col-md-7">
 
-		<p><strong>Creador</strong> <a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a> ({{propuesta.creador.nombre}} {{propuesta.creador.apellidos}})</p>
+		<p><strong>Creada por: </strong> <a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a> ({{propuesta.creador.nombre}} {{propuesta.creador.apellidos}})</p>
 
-		<p><strong>Fecha del partido</strong> {{propuesta.fecha_partido}}</p>
+		{% if propuesta.descripcion %}
+		<p><strong>Descripción: </strong> {{propuesta.descripcion|linebreaksbr}}</p>
+		{% endif %}
+
 		{% if propuesta.sitio %}
-		<p><strong>Sitio</strong> {{propuesta.sitio}}</p>
+		<p><strong>Sitio: </strong> {{propuesta.sitio}}</p>
 		{% endif %}
-		{% if participantes %}
-		<p><strong>Participantes</strong>
-			{% for participante in participantes %}
-				<a href="{% url 'viewPerfil' participante.jugador.user.username %}">@{{participante.jugador.user.username}}</a></br>
-			{% endfor %}
-		</p>
-		{% endif %}
+
+		<p><strong>Participantes: </strong></p>
+		<div>
+			<div class="participante">
+					<div>
+						<a href="{% url 'viewPerfil' propuesta.creador.user.username %}"><img class="img-circle" src="{%thumbnail propuesta.creador.foto_perfil|default:'default_profile.png' 100x100 crop %}" alt="@{{propuesta.creador.user.username}}"></a>
+					</div>
+					<div><a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a></div>
+				</div>
+			{% if participantes %}
+			
+				{% for participante in participantes %}
+				<div class="participante">
+					<div>
+						<a href="{% url 'viewPerfil' participante.jugador.user.username %}"><img class="img-circle" src="{%thumbnail participante.jugador.user.jugador.foto_perfil|default:'default_profile.png' 100x100 crop %}" alt="@{{participante.jugador.user.username}}"></a>
+					</div>
+					<div><a href="{% url 'viewPerfil' participante.jugador.user.username %}">@{{participante.jugador.user.username}}</a></div>
+				</div>
+				{% endfor %}
+			{% endif %}
+
+
+			{% if fecha_limite_futura and participantes.count < 3 and not creador and not participante %}
+				<div class="participante">
+					<div>
+						<a href="{% url 'apuntarsePartido' propuesta.id %}" class="btn btn-success btn-circle">{%bootstrap_icon "plus" %}</a>
+					</div>
+					<div><a href="{% url 'apuntarsePartido' propuesta.id %}">Unirse</a></div>
+				</div>
+			{% endif %}
+
+
+		</div>
 	</div>
-	{% if propuesta.estado == 'ABIERTA' %}
+	
+	
 	<div class="col-md-5 text-center">
+	{% if fecha_limite_futura and participantes.count < 3 %}
 		<div class="alert">
-			<p><strong>Fecha límite</strong> {{propuesta.fecha_limite}}</p>
+			<p><strong>Fecha límite inscripción: </strong> {{propuesta.fecha_limite}}</p><br>
 			{% countdown "countdown-propuesta" %}
 		</div>
-		{% if participantes.count < 3 and not creador and not participante %}
-		<div>
-			<a href="{% url 'apuntarsePartido' propuesta.id %}" class="btn btn-success ">{%bootstrap_icon "plus" %} Unirse!</a>
-		</div>
-		{% endif %}
-	</div>
 	{% endif %}
-</div>
-<div class="row col-md-12">
-	<p><strong>Descripción</strong> {{propuesta.descripcion|linebreaksbr}}</p>
+	</div>
+	
 </div>
 
 
-{% if propuesta.estado == 'ABIERTA' %}
+
+{% if fecha_limite_futura and participantes.count < 3 %}
 <script type="text/javascript">
 	initializeClock('countdown-propuesta', new Date("{{propuesta.fecha_limite.isoformat}}"));
 </script>
