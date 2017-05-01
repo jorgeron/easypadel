@@ -46,6 +46,8 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'listPropuestas' request.user.username %}">{% bootstrap_icon "list" %} Mis partidos</a></li>
 
+                            <li><a href="{% url 'listPropuestasAbiertas' %}">{% bootstrap_icon "search" %} Buscar partidos</a></li>
+
                             <li><a href="{% url 'createPropuesta' %}">{% bootstrap_icon "plus" %} Crear propuesta</a></li>
                             
                         </ul>

@@ -59,6 +59,7 @@ urlpatterns = [
 
     url(r'^propuesta/create$', easypadel.views.createPropuesta, name="createPropuesta"),
     url(r'^propuesta/list/(?P<username>[\w\-]+)$', easypadel.views.listPropuestas, name='listPropuestas'),
+    url(r'^propuesta/listAbiertas$', easypadel.views.listPropuestasAbiertas, name='listPropuestasAbiertas'),
     url(r'^propuesta/delete/(?P<propuesta_id>[0-9]+)/$', easypadel.views.deletePropuesta, name="deletePropuesta"),
     url(r'^propuesta/view/(?P<propuesta_id>[0-9]+)/$', easypadel.views.viewPropuesta, name="viewPropuesta"),
     url(r'^propuesta/join/(?P<propuesta_id>[0-9]+)/$', easypadel.views.apuntarsePartido, name="apuntarsePartido"),

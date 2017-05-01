@@ -548,6 +548,7 @@ def validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
     propuestas_creadas = Propuesta.objects.filter(creador = jugador)
     return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})'''
 
+@login_required
 def listPropuestas(request, username):
     jugador = Jugador.objects.get(user = request.user)
     propuestas = []
@@ -562,6 +563,17 @@ def listPropuestas(request, username):
     propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
     return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':True})
 
+@login_required
+def listPropuestasAbiertas(request):
+    rightNow = datetime.now()
+    propuestas = []
+    propuestas_consulta = Propuesta.objects.filter(fecha_limite__gte=rightNow)
+    for p in propuestas_consulta:
+        if p.participante_set.count() < 3:
+            propuestas.append(p)
+
+    propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
+    return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':False})
 
 @user_passes_test(jugadores_group)
 def deletePropuesta(request, propuesta_id):

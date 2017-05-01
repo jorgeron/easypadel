@@ -168,6 +168,6 @@ class Propuesta(models.Model):
 
 class Participante(models.Model):
     jugador = models.ForeignKey(Jugador)
-    propuesta = models.ForeignKey(Propuesta, related_name='participantes')
+    propuesta = models.ForeignKey(Propuesta)
     class Meta:
         unique_together = (('jugador','propuesta'))
