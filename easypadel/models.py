@@ -171,3 +171,11 @@ class Participante(models.Model):
     propuesta = models.ForeignKey(Propuesta)
     class Meta:
         unique_together = (('jugador','propuesta'))
+
+
+class Comentario(Post):
+	propuesta = models.ForeignKey(Propuesta)
+
+	class Meta:
+		verbose_name='Comentario'
+		verbose_name_plural='Comentarios'

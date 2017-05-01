@@ -52,13 +52,13 @@
 		{% endif %}
 
 		<p><strong>Participantes: </strong></p>
-		<div>
+		<div class="row">
 			<div class="participante">
-					<div>
-						<a href="{% url 'viewPerfil' propuesta.creador.user.username %}"><img class="img-circle" src="{%thumbnail propuesta.creador.foto_perfil|default:'default_profile.png' 100x100 crop %}" alt="@{{propuesta.creador.user.username}}"></a>
-					</div>
-					<div><a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a></div>
+				<div>
+					<a href="{% url 'viewPerfil' propuesta.creador.user.username %}"><img class="img-circle" src="{%thumbnail propuesta.creador.foto_perfil|default:'default_profile.png' 100x100 crop %}" alt="@{{propuesta.creador.user.username}}"></a>
 				</div>
+				<div><a href="{% url 'viewPerfil' propuesta.creador.user.username %}">@{{propuesta.creador.user.username}}</a></div>
+			</div>
 			{% if participantes %}
 			
 				{% for participante in participantes %}
@@ -83,6 +83,33 @@
 
 
 		</div>
+
+
+		<div class="panel panel-default">
+            <div class="panel-heading"><strong>Nuevo comentario</strong></div>
+            <div class="panel-body">
+              <form id='form' enctype="multipart/form-data" method='post' action='{% url 'createComentario' propuesta.id %}'>
+              {% csrf_token %}
+                {% bootstrap_form postform %}
+                {% buttons %}
+                <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "plus" %} Crear comentario
+                </button>
+                {% endbuttons %}
+              </form>
+            </div>
+          </div>
+		
+		<br>
+		<h2>Comentarios: </h2>
+		{% for comentario in comentarios %}
+		{% postview comentario request.user %}
+		{% endfor %}
+		{% if comentarios %}
+		{% bootstrap_pagination comentarios %}
+		{% endif %}
+
+
 	</div>
 	
 	
