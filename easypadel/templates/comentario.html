@@ -1,0 +1,50 @@
+
+{%load thumbnail %}
+{%load bootstrap3%}
+{% load humanize %}
+{% load groups %}
+{% load embed_video_tags %}
+<h3 class="title">
+	<a href="{% url 'viewPerfil' comentario.jugador.user.username %}"><img class="img-circle" src="{%thumbnail comentario.jugador.foto_perfil|default:'default_profile.png' 24x24 crop %}" alt=""> @{{comentario.jugador.user.username}}</a>
+	
+	<small>&bull; {{comentario.fecha_publicacion|naturaltime}}</small>
+	
+	{%if comentario.jugador.user == user or user|has_group:"Administradores"%}
+		<small><a href="#delete-{{comentario.id}}"  data-toggle="modal" data-dismiss="modal">{%bootstrap_icon "remove"%}</a></small>
+		<div class="modal fade" id="delete-{{comentario.id}}">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">¿Está seguro?</h4>
+					</div>
+					<div class="modal-body">
+						<p>¿Está seguro de querer eliminar este comentario?</p>
+					</div>
+					<div class="modal-footer">
+						<div class="pull-right">
+							<a href="{% url 'deleteComentario' comentario.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	{%endif%}
+</h3>
+
+<div class="summary">
+	{% if comentario.foto %}
+	<a href="{{comentario.foto.url}}" class="thumbnail text-center" target="_blank">
+		<img src="{% thumbnail comentario.foto 512x288 %}" class="img-responsive" alt="Foto">
+	{% endif %}
+	{% if comentario.texto != "" %}<p>{{comentario.texto|urlize}}</p>{% endif %}
+	{% if comentario.foto %}
+	</a>
+	{% endif %}
+	{% if comentario.video %}
+	<center>{% video comentario.video 'small' %}</center>
+	{% endif%}
+	
+</div>
+<hr class ="divider">

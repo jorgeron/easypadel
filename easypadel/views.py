@@ -19,7 +19,7 @@ import re
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm
 from django.forms import inlineformset_factory
 
 from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento, Propuesta, Participante, Comentario
@@ -603,7 +603,7 @@ def viewPropuesta(request, propuesta_id):
 
     comentarios = get_page(request, Comentario.objects.filter(propuesta_id = propuesta_id).order_by('-fecha_publicacion').distinct())
 
-    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'participante':participante, 'borrable':borrable, 'participantes':participantes, 'fecha_limite_futura':fecha_limite_futura, 'postform': PostForm(), 'comentarios':comentarios})
+    return render(request, 'viewPropuesta.html', {'propuesta':propuesta, 'creador':creador, 'participante':participante, 'borrable':borrable, 'participantes':participantes, 'fecha_limite_futura':fecha_limite_futura, 'comentarioform': ComentarioForm(), 'comentarios':comentarios})
 
 
 @user_passes_test(jugadores_group)
@@ -633,23 +633,39 @@ def fechaLimiteFutura(propuesta):
 def createComentario(request, propuesta_id):
     rightNow = datetime.now()
     propuesta = Propuesta.objects.get(pk = propuesta_id)
-    
-    if request.method=='POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-        
-            new_comentario = Comentario()
-            new_comentario.texto = form.cleaned_data['texto']
-            new_comentario.foto = form.cleaned_data['foto']
-            new_comentario.fecha_publicacion = rightNow
-            new_comentario.user = request.user
+    jugador = Jugador.objects.get(user = request.user)
 
-            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', new_comentario.texto)
-            for url in urls:
-                if re.search("(http://)?(www\.)?(youtube|yimg|youtu)\.([A-Za-z]{2,4}|[A-Za-z]{2}\.[A-Za-z]{2})/(watch\?v=)?[A-Za-z0-9\-_]{6,12}(&[A-Za-z0-9\-_]{1,}=[A-Za-z0-9\-_]{1,})*", url) or re.search("vimeo\.com/(\d+)", url) or "soundcloud" in url: #"youtube" or "youtu.be" or "vimeo" or "soundcloud" in url:
-                    new_comentario.video = url
-                    break
-            new_comentario.propuesta_id = propuesta.id
-            new_comentario.save()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    participantes = []
+    for p in (Participante.objects.filter(propuesta = propuesta)):
+        participantes.append(p.jugador)
+    
+    if jugador == propuesta.creador or jugador in participantes:
+
+        if request.method=='POST':
+            form = ComentarioForm(request.POST, request.FILES)
+            if form.is_valid():
+            
+                new_comentario = form.save(commit=False)
+                new_comentario.fecha_publicacion = rightNow
+                new_comentario.jugador = jugador
+
+                urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', new_comentario.texto)
+                for url in urls:
+                    if re.search("(http://)?(www\.)?(youtube|yimg|youtu)\.([A-Za-z]{2,4}|[A-Za-z]{2}\.[A-Za-z]{2})/(watch\?v=)?[A-Za-z0-9\-_]{6,12}(&[A-Za-z0-9\-_]{1,}=[A-Za-z0-9\-_]{1,})*", url) or re.search("vimeo\.com/(\d+)", url) or "soundcloud" in url: #"youtube" or "youtu.be" or "vimeo" or "soundcloud" in url:
+                        new_comentario.video = url
+                        break
+                new_comentario.propuesta_id = propuesta.id
+                new_comentario.save()
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     raise Http404()
+
+
+@login_required
+def deleteComentario(request, comentario_id):
+    comentario = Comentario.objects.get(pk = comentario_id)
+    jugador = Jugador.objects.get(user = request.user)
+    if(jugador == comentario.jugador or request.user.groups.filter(name='Administradores').exists()):
+        comentario.delete()
+    else:
+        raise Http404("No tiene permiso para eliminar este comentario.")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

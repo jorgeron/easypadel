@@ -23,6 +23,5 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Comentario',
                 'verbose_name_plural': 'Comentarios',
             },
-            bases=('easypadel.post',),
         ),
     ]

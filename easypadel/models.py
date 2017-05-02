@@ -173,8 +173,17 @@ class Participante(models.Model):
         unique_together = (('jugador','propuesta'))
 
 
-class Comentario(Post):
+class Comentario(models.Model):
+	jugador = models.ForeignKey(Jugador)
 	propuesta = models.ForeignKey(Propuesta)
+
+	texto = models.TextField(max_length=200, null=False)
+	fecha_publicacion = models.DateTimeField(auto_now=True)
+	foto = models.ImageField(null=True, blank=True, upload_to='comentario_pics/%Y-%m-%d/', verbose_name='Foto')
+	video = EmbedVideoField(null=True, blank=True)
+
+	def __unicode__(self):
+		return self.texto
 
 	class Meta:
 		verbose_name='Comentario'

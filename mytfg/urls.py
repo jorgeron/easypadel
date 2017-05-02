@@ -65,6 +65,7 @@ urlpatterns = [
     url(r'^propuesta/join/(?P<propuesta_id>[0-9]+)/$', easypadel.views.apuntarsePartido, name="apuntarsePartido"),
 
     url(r'^propuesta/comentario/create/(?P<propuesta_id>[0-9]+)/$', easypadel.views.createComentario, name="createComentario"),
+    url(r'^propuesta/comentario/delete/(?P<comentario_id>[0-9]+)/$', easypadel.views.deleteComentario, name="deleteComentario"),
 
     url(r'^admin/', admin.site.urls),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

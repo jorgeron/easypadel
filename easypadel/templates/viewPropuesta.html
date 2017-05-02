@@ -2,7 +2,7 @@
 
 {% load groups %}
 
-{% load posttools %}
+{% load comentariotools %}
 {% load countdown %}
 {% load bootstrap3 %}
 {% load embed_video_tags %}
@@ -85,30 +85,31 @@
 		</div>
 
 
-		<div class="panel panel-default">
-            <div class="panel-heading"><strong>Nuevo comentario</strong></div>
-            <div class="panel-body">
-              <form id='form' enctype="multipart/form-data" method='post' action='{% url 'createComentario' propuesta.id %}'>
-              {% csrf_token %}
-                {% bootstrap_form postform %}
-                {% buttons %}
-                <button type="submit" class="btn btn-primary">
-                {% bootstrap_icon "plus" %} Crear comentario
-                </button>
-                {% endbuttons %}
-              </form>
-            </div>
-          </div>
-		
-		<br>
-		<h2>Comentarios: </h2>
-		{% for comentario in comentarios %}
-		{% postview comentario request.user %}
-		{% endfor %}
-		{% if comentarios %}
-		{% bootstrap_pagination comentarios %}
+		{% if participante or creador %}
+			<div class="panel panel-default">
+	            <div class="panel-heading"><strong>Nuevo comentario</strong></div>
+	            <div class="panel-body">
+	              <form id='form' enctype="multipart/form-data" method='post' action='{% url 'createComentario' propuesta.id %}'>
+	              {% csrf_token %}
+	                {% bootstrap_form comentarioform %}
+	                {% buttons %}
+	                <button type="submit" class="btn btn-primary">
+	                {% bootstrap_icon "plus" %} Crear comentario
+	                </button>
+	                {% endbuttons %}
+	              </form>
+	            </div>
+	          </div>
+			
+			{% if comentarios %}
+				<br>
+				<h2>Comentarios: </h2>
+				{% for comentario in comentarios %}
+				{% comentarioview comentario request.user %}
+				{% endfor %}
+				{% bootstrap_pagination comentarios %}
+			{% endif %}
 		{% endif %}
-
 
 	</div>
 	
