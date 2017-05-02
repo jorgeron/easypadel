@@ -1,27 +1,86 @@
 {% extends "base.html" %}
 {% load static %} 
 {% load bootstrap3 %}
-
+{% load thumbnail %}
 
 
 {% block pagetitle %} Login {% endblock %}
-{% block pageheaderprop %} hidden-xs {% endblock %}
-{% block pageheader %}
-	<h1>Bienvenido a easyPadel!</h1>
-{% endblock %}
+
 
 {% block pagebody %}
 
-	    <form id='form' method='post' action=''>
-			{% csrf_token %}
-			{% bootstrap_form form %}
-			<p class="message">¿No estás registrado? <a href="/jugador/registration">Créate una cuenta aquí!</a></p>
-			{% buttons %}
-			<button type="submit" class="btn btn-primary">
-			{% bootstrap_icon "log-in" %}
-			Login
-			</button>
-			{% endbuttons %}
-		</form>
+
+
+<div class="intro-header">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-message">
+                        <img align="center" alt="easyPadel" src="{%thumbnail 'logos/logo.png' 400x200 crop %}">
+                        <h3>Tu red social de pádel</h3>
+                        <hr class="intro-divider">
+                        
+
+                        <div id="login-overlay" class="modal-dialog">
+
+
+
+
+    	<div class="modal-content">
+    	  <div class="modal-header">
+	          <h4 class="modal-title" id="myModalLabel" align="center">Entrar en easyPadel</h4>
+	      </div>
+
+	      	<div class="modal-body">
+              	<div class="row">
+	              		<div class="col-xs-6">
+	                      	<div class="well">
+
+							    <form id='form' method='post' action=''>
+									{% csrf_token %}
+									{% bootstrap_form form %}
+									{% buttons %}
+									<button type="submit" class="btn btn-primary btn-block">
+									{% bootstrap_icon "log-in" %}
+									Login
+									</button>
+									{% endbuttons %}
+								</form>
+							</div>
+                  		</div>
+
+	                  <div class="col-xs-6">
+	                      <p class="lead">Regístrate ahora <span class="text-success">GRATIS</span></p>
+	                      <ul class="list-unstyled" style="line-height: 2">
+	                          <li><span class="fa fa-check text-success"></span> Personaliza tu perfil</li>
+	                          <li><span class="fa fa-check text-success"></span> Crea tu comunidad de amigos</li>
+	                          <li><span class="fa fa-check text-success"></span> Alquila pistas</li>
+	                          <li><span class="fa fa-check text-success"></span> Únete a partidos</li>
+	                          <li><span class="fa fa-check text-success"></span><b> ¡DIVIÉRTETE!</b></li>
+	                      </ul>
+	                      <p><a href="{% url 'registroJugador' %}" class="btn btn-success btn-block">Crear cuenta</a></p>
+	                  </div>
+
+                </div>
+          	</div>
+		</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
 
 {% endblock %}

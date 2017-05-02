@@ -1,5 +1,6 @@
 {% load bootstrap3 %}
 {% load groups %}
+{% load static %}
 {% load thumbnail %}
 
 
@@ -13,7 +14,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'index' %}">easyPadel</a>
+            <a class="navbar-brand" href="{% url 'index' %}"><img alt="easyPadel" src="{%thumbnail 'logos/logo-horizontal.png' 120x32 crop %}"></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
