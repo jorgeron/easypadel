@@ -14,24 +14,29 @@
 
 {% block pagebody %}
 
+<div class="row">
 {% for pista in list %}
+
+<div class="col-md-3 m-b-lg">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<div class="media">
-				<div class="media-left">
-					<a href="{% url 'viewPista' pista.id %}">
-								<img class="media-object img-rounded" src="{%thumbnail pista.foto|default:'no-image.png' 48x48 crop %}" alt="{{pista.name}}">
-							</a>
-				</div>
+		<div class="panel-heading" style="padding: 0px; border:0px;" >
 
 
-				<div class="media-body">
-					<h4 class="media-heading"><a href="{% url 'viewPista' pista.id %}">{{pista.nombre}}</a></h4>
-				</div>
-			</div>
+			<a href="{% url 'viewPista' pista.id %}">
+						<img class="media-object " src="{%thumbnail pista.foto|default:'no-image.png' 261x200 crop %}" alt="{{pista.name}}">
+			</a>
+
+
+		</div>
+		<div class="panel-body text-center">
+
+			<h4 class="media-heading"><a href="{% url 'viewPista' pista.id %}">{{pista.nombre}}</a></h4>
+
 		</div>
 	</div>
+</div>
 {% endfor %}
+</div>
 
 {% if propietario %}
 <p><a class="btn btn-success btn-lg" href="{% url 'createPista' %}" role="button">{% bootstrap_icon "plus" %} Añadir pista</a></p>

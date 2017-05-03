@@ -7,82 +7,103 @@
 {% load static %}
 
 {% block pagetitle %}{{pista.nombre}}{% endblock %}
+
 {% block pageheader %}
-
 <h1>{{pista.nombre}}</h1>
-
-
-
-<div class="profile-content pull-right">
-
-<a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "time" %} Ver horarios</a>
-
-{% if editable %}
-
-  <a class="btn btn-primary btn-sm" href="{% url 'asignarHorario' pista.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
-
-  <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-sm">{%bootstrap_icon "edit" %} Editar Pista</a>
-
-  <a class="btn btn-danger btn-sm" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
-
-  <div class="modal fade" id="delete-pista">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <h4 class="modal-title">¿Está seguro?</h4>
-              </div>
-              <div class="modal-body">
-                  <h5>¿Está seguro de querer borrar esta pista?</h5>
-              </div>
-              <div class="modal-footer">
-                 
-                      <a href="{% url 'deletePista' pista.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                  
-              </div>
-          </div>
-      </div>
-  </div>
-  {% endif %}
-
-  <a href="{% url 'listPistas' pista.empresa.user.id %}" class="btn btn-danger btn-sm" role="button">
-            {% bootstrap_icon "chevron-left" %}Volver</a>
-
-</div>
-
-
 {% endblock %}
 
 {% block pagespecial %}
 <div class="container sections-wrapper">
   <div class="row">
     <div class="primary col-md-8 col-sm-12 col-xs-12">
-      <section class="about section">
+
         <div class="section-inner">
 
           <img src="{% thumbnail pista.foto|default:'no-image.png' 500x500 %}" class="img-responsive" alt="Responsive image">
-        </div>
-      </section>
-    </div>
-    <div class="secondary col-md-4 col-sm-12 col-xs-12">
-      <aside class="section">
-      	<div class="section-inner">
-          <h2 class="heading sr-only">Perfil</h2>
-          <div class="content">
-            <ul class="list-unstyled">
 
-              <li><strong>{{pista.nombre}}</strong></li>
-              <li><strong>Tipo de superficie: </strong> {{pista.tipo_superficie}}</li>
-              <li><strong>Tipo pared: </strong> {{pista.tipo_pared}} </li>
-              <li><strong>Cubierta: </strong> {% if pista.cubierta %} Sí {% else %} No {%endif%} </li>
-              <li><strong>Descripción: </strong> {{pista.descripcion}} </li>
-              
-            </ul>
-          </div>
+          {% if pista.descripcion %}
+            <div class="section-inner">
+              <h5>Descripción:</h5>
+              <p>{{pista.descripcion}}</p>
+            </div>
+          {% endif %}
+
         </div>
-      </aside>
+
+
+        <a href="{% url 'listPistas' pista.empresa.user.id %}" class="btn btn-danger btn-sm" role="button">
+            {% bootstrap_icon "chevron-left" %}Volver</a>
+
+        
     </div>
+
+
+
+    <div class="secondary col-md-4 col-sm-12 col-xs-12">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5>Características: </h5>
+        </div>
+
+        <div class="panel-body" >
+          <ul class="list-unstyled">
+
+                <li><strong>Tipo de superficie: </strong> {{pista.tipo_superficie}}</li>
+                <li><strong>Tipo pared: </strong> {{pista.tipo_pared}} </li>
+                <li><strong>Cubierta: </strong> {% if pista.cubierta %} Sí {% else %} No {%endif%} </li>
+
+          </ul>
+
+          <a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "time" %} Ver horarios</a>
+
+
+        </div>
+      </div>
+
+      {% if editable %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5>Editar pista</h5>
+        </div>
+
+        <div class="panel-body" >
+
+          <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "edit" %} Editar Pista</a>
+
+          <a class="btn btn-primary btn-block" href="{% url 'asignarHorario' pista.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
+
+          <a class="btn btn-danger btn-block" style="margin-top: 50px;" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
+
+          <div class="modal fade" id="delete-pista">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title">¿Está seguro?</h4>
+                      </div>
+                      <div class="modal-body">
+                          <h5>¿Está seguro de querer borrar esta pista?</h5>
+                      </div>
+                      <div class="modal-footer">
+                         
+                              <a href="{% url 'deletePista' pista.id %}" class="btn btn-danger" >{% bootstrap_icon "remove" %} Eliminar </button></a>
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                          
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+
+
   </div>
 </div>
 
