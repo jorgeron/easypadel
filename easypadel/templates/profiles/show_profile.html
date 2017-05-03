@@ -96,7 +96,7 @@
                 <li><strong>{% bootstrap_icon "user" %}</strong> @{{ show_user.user.username }}</li>
                 
                 {%if show_user.user|has_group:"Jugadores" %} 
-                  <li><strong>{% bootstrap_icon "calendar" %}</strong> {{ show_user.fecha_nacimiento }}</li>
+                  <li><strong><i class="fa fa-birthday-cake" aria-hidden="true"></i></strong> {{ show_user.fecha_nacimiento }}</li>
                   <li><strong>{% bootstrap_icon "certificate" %}</strong> {%if show_user.sexo == 'H'%} Hombre {%else%} Mujer {%endif%}</li>
                   <li><strong>{% bootstrap_icon "map-marker" %}</strong> {{ show_user.localidad }}</li>
                 {% endif %}
