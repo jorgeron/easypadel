@@ -7,7 +7,8 @@
 	<h1>{{operation}} {{class}}</h1>
 {% endblock %}
 {% block pagebody %}
-
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+	<div class="col-md-8 col-sm-12 col-xs-12">
 	<form id='form' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
 		{% bootstrap_form form %}
 
@@ -31,5 +32,6 @@
 		</button>
 		{% endbuttons %}
 	</form>
-
+	</div>
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
 {% endblock %}

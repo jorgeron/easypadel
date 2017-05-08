@@ -11,33 +11,42 @@
 {% block pageheader %}
 	<h1>Registro {{role}}</h1>
 {% endblock %}
+
+
 {% block pagebody %}
-	<form id='form' method='post' action=''>{% csrf_token %}
-		<h3>Credenciales de usuario</h3>
-		{% bootstrap_form form %}
+
+<div class="row">
+	<div class="col-md-2 col-sm-12 col-xs-12"></div>
+	<div class="col-md-8 col-sm-12 col-xs-12">
+		<form id='form' method='post' action=''>{% csrf_token %}
+			<h3>Credenciales de usuario</h3>
+			{% bootstrap_form form %}
 
 
-		<h3>Datos personales</h3>
-		{% if formJugador %}
-		{% bootstrap_form formJugador %}
-		{% endif %}
+			<h3>Datos personales</h3>
+			{% if formJugador %}
+			{% bootstrap_form formJugador %}
+			{% endif %}
 
-		{% if formAdmin %}
-		{% bootstrap_form formAdmin %}
-		{% endif %}
+			{% if formAdmin %}
+			{% bootstrap_form formAdmin %}
+			{% endif %}
 
-		{% if formEmpresa %}
-		{% bootstrap_form formEmpresa %}
-		{% endif %}
+			{% if formEmpresa %}
+			{% bootstrap_form formEmpresa %}
+			{% endif %}
 
-		{% buttons %}
-		<button type="submit" class="btn btn-primary">
-		{% bootstrap_icon "pencil" %} Registrarse
-		</button>
-		<button class="btn btn-danger" onClick="window.history.back();return false;">
-		{% bootstrap_icon "chevron-left" %} Cancelar
-		</button>
-		{% endbuttons %}
+			{% buttons %}
+			<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "pencil" %} Registrarse
+			</button>
+			<button class="btn btn-danger" onClick="window.history.back();return false;">
+			{% bootstrap_icon "chevron-left" %} Cancelar
+			</button>
+			{% endbuttons %}
 
-	</form>
+		</form>
+	</div>
+	<div class="col-md-2 col-sm-12 col-xs-12"></div>
+</div>
 {% endblock %}
