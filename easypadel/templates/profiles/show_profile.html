@@ -94,16 +94,22 @@
                 <li> <h4> {{ show_user.nombre }}{%if show_user.user|has_group:"Jugadores" %} {{show_user.apellidos}} {% endif %} </h4></li>
 
                 <li><strong>{% bootstrap_icon "user" %}</strong> @{{ show_user.user.username }}</li>
+
+                <li><strong>{% bootstrap_icon "envelope" %}</strong> {{ show_user.email }}</li>
+
+                <li><strong>{% bootstrap_icon "earphone" %}</strong> {{ show_user.telefono }}</li>
                 
                 {%if show_user.user|has_group:"Jugadores" %} 
                   <li><strong><i class="fa fa-birthday-cake" aria-hidden="true"></i></strong> {{ show_user.fecha_nacimiento }}</li>
                   <li><strong>{% bootstrap_icon "certificate" %}</strong> {%if show_user.sexo == 'H'%} Hombre {%else%} Mujer {%endif%}</li>
                   <li><strong>{% bootstrap_icon "map-marker" %}</strong> {{ show_user.localidad }}</li>
+                {% else %}
+                  <li><strong>{% bootstrap_icon "map-marker" %}</strong> {{ show_user.direccion }}</li>
                 {% endif %}
 
-                <li><strong>{% bootstrap_icon "envelope" %}</strong> {{ show_user.email }}</li>
+                
 
-                <li><strong>{% bootstrap_icon "earphone" %}</strong> {{ show_user.telefono }}</li>
+                
 
                 {%if show_user.descripcion %}
                 <br>

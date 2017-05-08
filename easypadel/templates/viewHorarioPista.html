@@ -19,7 +19,8 @@
 <div class="container sections-wrapper">
   <div class="row">
     <div class="primary col-md-8 col-sm-12 col-xs-12">
-      
+      <aside class="section">
+        <div class="section-inner">
         
           {% for dia in horario_pista_dias %}
           <table class="table table-bordered custab">
@@ -65,7 +66,7 @@
                         {% bootstrap_icon "ok" %} 
                         {% endif %}
                       {% else %} 
-                        {% if franjaHoraria.jugador %} @{{franjaHoraria.jugador.user.username}}
+                        {% if franjaHoraria.jugador %}@{{franjaHoraria.jugador.user.username}}
                         {% else %}
                         {% bootstrap_icon "remove" %} 
                         {% endif %}
@@ -74,7 +75,8 @@
               {% endfor %}
           </table>
           {% endfor %}
-    
+        </div>
+      </aside>
     </div>
 
     <div class="secondary col-md-4 col-sm-12 col-xs-12">
