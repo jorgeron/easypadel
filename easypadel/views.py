@@ -15,6 +15,13 @@ from django.db import IntegrityError
 from datetime import datetime,timedelta
 from django.forms.forms import NON_FIELD_ERRORS
 from django.db.models import Q
+
+from django.dispatch.dispatcher import receiver
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.ipn.signals import valid_ipn_received
+from paypal.standard.models import ST_PP_COMPLETED
+from mytfg.settings import PAYPAL_IPN_DOMAIN, PAYPAL_URL
+
 import re
 
 
@@ -402,10 +409,37 @@ def listEmpresas(request):
 def alquilarFranja(request, franjaHoraria_id):
     jugador = Jugador.objects.get(user_id = request.user.id)
     franja_horaria = FranjaHoraria.objects.get(pk = franjaHoraria_id)
+
+    # What you want the button to do.
+    paypal_dict = {
+        "business": franja_horaria.horario.empresa.paypalMail,
+        "amount": franja_horaria.precio,
+        "item_name": 'alquilerFranja#'+str(franja_horaria.id),
+        "invoice": 'alquilerFranja#'+str(franja_horaria.id),
+        "notify_url": PAYPAL_IPN_DOMAIN + reverse('paypal-ipn'),
+        "return_url": request.META.get('HTTP_HOST')+str(request.get_full_path),
+        "currency_code": 'EUR',
+        #"cancel_return": reverse('viewHorarioPista', franja_horaria.dia_asignacion.pista.id),
+        "custom": {'franjaHoraria_id':franjaHoraria_id, 'juagdor':jugador},  # Custom command to correlate to some function later (optional)
+    }
+
+    # Create the instance.
+    paypalForm = PayPalPaymentsForm(initial=paypal_dict)
+
+    return render(request, 'payment.html', {'pista':franja_horaria.dia_asignacion.pista, 'paypalForm':paypalForm})
+
+
+@receiver(valid_ipn_received)
+def alquilarFranjaExito(sender, **kwargs):
+    if sender.payment_status != ST_PP_COMPLETED:
+        return # Not a valid payment
+    franja_horaria = FranjaHoraria.objects.get(pk = int(sender.custom['franjaHoraria_id']))
+    if not franja_horaria or franja_horaria.asignada or not franja_horaria.disponible or sender.receiver_email != franja_horaria.horario.empresa.paypalMail or sender.mc_gross != franja_horaria.precio or sender.mc_currency != "EUR":
+        return # Not a valid payment
+    
     franja_horaria.disponible = False
-    franja_horaria.jugador = jugador
+    franja_horaria.jugador = sender.custom['jugador']
     franja_horaria.save()
-    return render(request, 'viewPista.html', {'pista':franja_horaria.dia_asignacion.pista})
 
 @login_required
 def viewPerfil(request, username):

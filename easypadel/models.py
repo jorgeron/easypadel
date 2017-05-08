@@ -55,6 +55,7 @@ class Jugador(Actor):
 
 class Empresa(Actor):
 	direccion = models.CharField(max_length=200, verbose_name=_("Dirección"))
+	paypalMail = models.EmailField(verbose_name=_("PayPal e-mail"))
 
 	def __unicode__(self):
 		return self.nombre

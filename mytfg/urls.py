@@ -68,4 +68,5 @@ urlpatterns = [
     url(r'^propuesta/comentario/delete/(?P<comentario_id>[0-9]+)/$', easypadel.views.deleteComentario, name="deleteComentario"),
 
     url(r'^admin/', admin.site.urls),
+    url(r'^paypal/', include('paypal.standard.ipn.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

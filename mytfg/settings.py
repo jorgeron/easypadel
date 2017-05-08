@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'datetimewidget',
     'django_bootstrap_dynamic_formsets',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,11 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'easypadel/media')
 MEDIA_URL = '/media/'
+
+
+#PayPal configuration
+PAYPAL_URL = os.environ.get('PAYPAL_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr')
+PAYPAL_IPN_DOMAIN = os.environ.get('PAYPAL_IPN_DOMAIN', 'https://loquesea.ngrok.io')
+#si vamos a usar el sandbox de paypal, lo ponemos a true
+PAYPAL_TEST = True
+
