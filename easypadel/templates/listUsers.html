@@ -7,24 +7,33 @@
 <h1>Usuarios</h1> {% endblock %} 
 {% block pagebody %}
 
+
+<div class="row">
 {% for actor in list %}
+
+<div class="col-md-3 m-b-lg">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<div class="media">
-				<div class="media-left">
-					<a href="{% url 'viewPerfil' actor.user.username %}">
-								<img class="media-object img-rounded" src="{%thumbnail actor.foto_perfil|default:'no-image.png' 48x48 crop %}" alt="{{actor.nombre}}">
-							</a>
-				</div>
+		<div class="panel-heading" style="padding: 0px; border:0px;" >
 
 
-				<div class="media-body">
-					<h4 class="media-heading"><a href="{% url 'viewPerfil' actor.user.username %}">{{actor.nombre}}</a></h4>
-				</div>
-			</div>
+			<a href="{% url 'viewPerfil' actor.user.username %}">
+						<img class="media-object " src="{%thumbnail actor.foto_cabecera|default:'default-header.png' 261x110 crop %}" alt="{{actor.nombre}}">
+			</a>
+
+
+		</div>
+		<div class="panel-body text-center">
+			<a href="{% url 'viewPerfil' actor.user.username %}">
+				<img class="panel-profile-img" src="{%thumbnail actor.foto_perfil|default:'default_profile.png' 100x100 crop %}">
+			</a>
+
+			<h4 class="media-heading"><a href="{% url 'viewPerfil' actor.user.username %}">{{actor.nombre}}</a></h4>
+			<a href="{% url 'viewPerfil' actor.user.username %}"><p class="text-center">@{{actor.user.username}}</p></a>
+
 		</div>
 	</div>
+</div>
 {% endfor %}
-
+</div>
 
 {% endblock %} 
