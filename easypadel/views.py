@@ -16,7 +16,7 @@ from datetime import datetime,timedelta
 from django.forms.forms import NON_FIELD_ERRORS
 from django.db.models import Q
 
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.ipn.signals import valid_ipn_received
 from paypal.standard.models import ST_PP_COMPLETED
@@ -415,14 +415,17 @@ def alquilarFranja(request, franjaHoraria_id):
         "business": franja_horaria.horario.empresa.paypalMail,
         "amount": franja_horaria.precio,
         "item_name": 'alquilerFranja#'+str(franja_horaria.id),
-        "invoice": 'alquilerFranja#'+str(franja_horaria.id),
+        "item_number": franja_horaria.id,
+        "invoice": 'easyPadel.alquilerFranja#'+str(franja_horaria.id),
         "notify_url": PAYPAL_IPN_DOMAIN + reverse('paypal-ipn'),
-        "return_url": request.META.get('HTTP_HOST')+str(request.get_full_path),
+        #"return_url": request.META.get('HTTP_HOST')+request.get_full_path(),
+        "return_url": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
         "currency_code": 'EUR',
-        #"cancel_return": reverse('viewHorarioPista', franja_horaria.dia_asignacion.pista.id),
-        "custom": {'franjaHoraria_id':franjaHoraria_id, 'juagdor':jugador},  # Custom command to correlate to some function later (optional)
+        "cancel_return": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
+        "custom": jugador.user.username,  # Custom command to correlate to some function later (optional)
+        "rm":1,
     }
-
+    #print('http://127.0.0.1:8000'+request.get_full_path())
     # Create the instance.
     paypalForm = PayPalPaymentsForm(initial=paypal_dict)
 
@@ -433,12 +436,14 @@ def alquilarFranja(request, franjaHoraria_id):
 def alquilarFranjaExito(sender, **kwargs):
     if sender.payment_status != ST_PP_COMPLETED:
         return # Not a valid payment
-    franja_horaria = FranjaHoraria.objects.get(pk = int(sender.custom['franjaHoraria_id']))
-    if not franja_horaria or franja_horaria.asignada or not franja_horaria.disponible or sender.receiver_email != franja_horaria.horario.empresa.paypalMail or sender.mc_gross != franja_horaria.precio or sender.mc_currency != "EUR":
+    franja_horaria = FranjaHoraria.objects.get(pk = sender.item_number)
+    if not franja_horaria or franja_horaria.jugador or not franja_horaria.asignada or not franja_horaria.disponible or sender.receiver_email != franja_horaria.horario.empresa.paypalMail or sender.mc_gross != franja_horaria.precio or sender.mc_currency != "EUR":
+        print('NO VÁLIDO')
         return # Not a valid payment
     
+    jugador = Jugador.objects.get(user = User.objects.get(username = sender.custom))
     franja_horaria.disponible = False
-    franja_horaria.jugador = sender.custom['jugador']
+    franja_horaria.jugador = jugador
     franja_horaria.save()
 
 @login_required

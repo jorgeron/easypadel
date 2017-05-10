@@ -28,7 +28,20 @@ DEBUG = True
 LOGIN_REDIRECT_URL = "/404.html"
 LOGIN_URL = "/404.html"
 
-ALLOWED_HOSTS = []
+
+#url ngrok o dominio externo de la app
+URL_EXTERNA = '9b32aa30.ngrok.io'
+
+#PayPal configuration
+PAYPAL_URL = os.environ.get('PAYPAL_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr')
+PAYPAL_IPN_DOMAIN = os.environ.get('PAYPAL_IPN_DOMAIN', 'http://'+URL_EXTERNA)
+#si vamos a usar el sandbox de paypal, lo ponemos a true
+PAYPAL_TEST = True
+
+
+
+ALLOWED_HOSTS = [URL_EXTERNA,
+                '127.0.0.1',]
 
 
 # Application definition
@@ -140,9 +153,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'easypadel/media')
 MEDIA_URL = '/media/'
 
 
-#PayPal configuration
-PAYPAL_URL = os.environ.get('PAYPAL_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr')
-PAYPAL_IPN_DOMAIN = os.environ.get('PAYPAL_IPN_DOMAIN', 'https://loquesea.ngrok.io')
-#si vamos a usar el sandbox de paypal, lo ponemos a true
-PAYPAL_TEST = True
+
 
