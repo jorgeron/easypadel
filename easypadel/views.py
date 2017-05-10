@@ -410,26 +410,30 @@ def alquilarFranja(request, franjaHoraria_id):
     jugador = Jugador.objects.get(user_id = request.user.id)
     franja_horaria = FranjaHoraria.objects.get(pk = franjaHoraria_id)
 
-    # What you want the button to do.
-    paypal_dict = {
-        "business": franja_horaria.horario.empresa.paypalMail,
-        "amount": franja_horaria.precio,
-        "item_name": 'alquilerFranja#'+str(franja_horaria.id),
-        "item_number": franja_horaria.id,
-        "invoice": 'easyPadel.alquilerFranja#'+str(franja_horaria.id),
-        "notify_url": PAYPAL_IPN_DOMAIN + reverse('paypal-ipn'),
-        #"return_url": request.META.get('HTTP_HOST')+request.get_full_path(),
-        "return_url": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
-        "currency_code": 'EUR',
-        "cancel_return": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
-        "custom": jugador.user.username,  # Custom command to correlate to some function later (optional)
-        "rm":1,
-    }
-    #print('http://127.0.0.1:8000'+request.get_full_path())
-    # Create the instance.
-    paypalForm = PayPalPaymentsForm(initial=paypal_dict)
+    if franja_horaria.disponible and not franja_horaria.jugador and franja_horaria.asignada:
+        # What you want the button to do.
+        paypal_dict = {
+            "business": franja_horaria.horario.empresa.paypalMail,
+            "amount": franja_horaria.precio,
+            "item_name": 'alquilerFranja#'+str(franja_horaria.id),
+            "item_number": franja_horaria.id,
+            "invoice": 'easyPadel.alquilerFranja#'+str(franja_horaria.id),
+            "notify_url": PAYPAL_IPN_DOMAIN + reverse('paypal-ipn'),
+            #"return_url": request.META.get('HTTP_HOST')+request.get_full_path(),
+            "return_url": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
+            "currency_code": 'EUR',
+            "cancel_return": 'http://127.0.0.1:8000/pistas/viewHorarioPista/'+str(franja_horaria.dia_asignacion.pista.id),
+            "custom": jugador.user.username,  # Custom command to correlate to some function later (optional)
+            "rm":1,
+        }
 
-    return render(request, 'payment.html', {'pista':franja_horaria.dia_asignacion.pista, 'paypalForm':paypalForm})
+        # Create the instance.
+        paypalForm = PayPalPaymentsForm(initial=paypal_dict)
+
+        return render(request, 'payment.html', {'franjaHoraria':franja_horaria, 'paypalForm':paypalForm})
+    else:
+        raise Http404("No puede alquilar esta franja horaria")
+    
 
 
 @receiver(valid_ipn_received)

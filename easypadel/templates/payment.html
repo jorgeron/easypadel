@@ -1,6 +1,47 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load humanize %}
+{% load thumbnail %}
+
+{% block pagetitle %}Alquilar pista{% endblock %}
+{% block pageheader %}<h1>Alquilar pista</h1>{% endblock %}
 
 
 {% block pagebody %}
-{{ paypalForm.render }}
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+<div class="col-md-8 col-sm-12 col-xs-12">
+	<div class="panel panel-default">
+        <div class="panel-heading text-center"><strong>Resumen del alquiler</strong></div>
+        <div class="panel-body">
+        	<div class="row" style="margin:10px;">
+	        	<div class="col-md-4 col-sm-12 col-xs-12">
+	        		<img src="{% thumbnail franjaHoraria.dia_asignacion.pista.foto|default:'no-image.png' 300x300 %}" class="img-responsive" alt="Responsive image">
+	        	</div>
+	        	<div class="col-md-8 col-sm-12 col-xs-12">
+		        	<ul class="list-unstyled">
+
+		                <li><p><strong>Día de la reserva:</strong> {{franjaHoraria.dia_asignacion.dia}}</p></li>
+		                <li><p><strong>Hora de la reserva:</strong> {{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</p></li>
+		                <li><p><strong>Precio:</strong> {{franjaHoraria.precio}} €</p></li>
+		                <li><p><strong>Instalaciones:</strong> {{franjaHoraria.horario.empresa.nombre}}</p></li>
+		                <li><p><strong>Pista:</strong> {{franjaHoraria.dia_asignacion.pista.nombre}}</p></li>
+		            </ul>
+		        </div>
+
+	        </div>
+	        <div class="row text-center" style="padding:10px;">
+	            <h4>Pulse sobre el siguiente botón para proceder al pago del alquiler:</h4>
+	            <div class="text-center">
+	            	{{ paypalForm.render }}
+	            </div>
+	        </div>
+        </div>
+</div>
+
+<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Cancelar
+		</button>
+</div>
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+
 {% endblock %}

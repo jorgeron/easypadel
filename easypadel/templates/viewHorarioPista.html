@@ -26,22 +26,22 @@
           <table class="table table-bordered custab">
           <thead>
               <tr>
-                  <th class="text-center" colspan="3">{{dia.dia}}</th>
+                  <th class="text-center" colspan="3" style="background-color: #BDBDBD">{{dia.dia}}</th>
               </tr>
               <tr>
-                  <th>Hora</th>
-                  <th>Precio</th>
-                  <th>Disponibilidad</th>
+                  <th style="background-color: #E6E6E6">Hora</th>
+                  <th class="text-center" style="background-color: #E6E6E6">Precio</th>
+                  <th style="background-color: #E6E6E6" class="text-center">Disponibilidad</th>
               </tr>
           </thead>
               {% for franjaHoraria in dic_dias_franjas|get_item:dia.id %}
                 <tr>
-                    <td>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</td>
-                    <td>{{franjaHoraria.precio}} €</td>
+                    <td><h5>{{franjaHoraria.hora_inicio}} - {{franjaHoraria.hora_fin}}</h5></td>
+                    <td class="text-center"><h5>{{franjaHoraria.precio}} €</h5></td>
                     <td class="text-center">
                       {% if franjaHoraria.disponible %} 
                         {% if request.user|has_group:"Jugadores" %}
-                            <a class="btn btn-primary btn-sm" href="#alquilar-franja-{{franjaHoraria.id}}" data-toggle="modal" data-dismiss="modal"> Alquilar</a>
+                            <a class="btn btn-success btn-sm" href="#alquilar-franja-{{franjaHoraria.id}}" data-toggle="modal" data-dismiss="modal"> Alquilar</a>
 
                             <div class="modal fade" id="alquilar-franja-{{franjaHoraria.id}}">
                                 <div class="modal-dialog">
@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="modal-footer">
                                            
-                                                <a href="{% url 'alquilarFranja' franjaHoraria.id %}" class="btn btn-primary" >Alquilar </button></a>
+                                                <a href="{% url 'alquilarFranja' franjaHoraria.id %}" class="btn btn-success" >Alquilar </button></a>
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                             
                                         </div>
@@ -66,7 +66,9 @@
                         {% bootstrap_icon "ok" %} 
                         {% endif %}
                       {% else %} 
-                        {% if franjaHoraria.jugador %}@{{franjaHoraria.jugador.user.username}}
+                        {% if franjaHoraria.jugador %}<h4 style="margin-top: 7px;margin-bottom: 6px;"><a href="{% url 'viewPerfil' franjaHoraria.jugador.user.username %}">
+                        <img class="img-circle" src="{%thumbnail franjaHoraria.jugador.foto_perfil|default:'default_profile.png' 25x25 crop %}" alt="@{{franjaHoraria.jugador.user.username}}">
+                        @{{franjaHoraria.jugador.user.username}}</a></h4>
                         {% else %}
                         {% bootstrap_icon "remove" %} 
                         {% endif %}
