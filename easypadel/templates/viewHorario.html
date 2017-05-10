@@ -15,7 +15,9 @@
 {% if editable %}
   <div class="profile-content pull-right">
 
-  <a class="btn btn-danger btn-sm" href="#delete-horario" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar Horario</a>
+  <a class="btn btn-danger" href="#delete-horario" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar Horario</a>
+
+
 
   <div class="modal fade" id="delete-horario">
       <div class="modal-dialog">
@@ -49,26 +51,27 @@
       <table class="table table-bordered custab">
         <thead>
             <tr>
-                <th>Hora</th>
-                <th>Precio</th>
-                <th class="text-center">Disponible</th>
+                <th style="background-color: #E6E6E6">Hora</th>
+                <th class="text-center" style="background-color: #E6E6E6">Precio</th>
+                <th style="background-color: #E6E6E6" class="text-center">Disponibilidad</th>
             </tr>
         </thead>
           {% for franja in franjasHorarias %}
                 <tr>
-                    <td>{{franja.hora_inicio}} - {{franja.hora_fin}}</td>
-                    <td>{{franja.precio}} €</td>
-                    <td class="text-center">{% if franja.disponible %} {% bootstrap_icon "ok" %} 
-                    {% else %} {% bootstrap_icon "remove" %} {%endif%}</td>
+                    <td><h5>{{franja.hora_inicio}} - {{franja.hora_fin}}</h5></td>
+                    <td class="text-center"><h5>{{franja.precio}} €</h5></td>
+                    <td class="text-center">{% if franja.disponible %} <h4>{% bootstrap_icon "ok" %}</h4> 
+                    {% else %} <h4 style="color:red;">{% bootstrap_icon "remove" %}</h4> {%endif%}</td>
                 </tr>
                 
           {% endfor %}
                 
         </table>
-    </div>
 
-
-    
+        <button class="btn btn-danger" onClick="window.history.back();return false;">
+          {% bootstrap_icon "chevron-left" %} Volver
+        </button>
+    </div> 
   </div>
 </div>
 
