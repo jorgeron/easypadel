@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import RegexValidator, MinValueValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from embed_video.fields import EmbedVideoField
 
 
@@ -42,6 +42,12 @@ class Jugador(Actor):
 	fecha_nacimiento = models.DateField(verbose_name=_("Fecha de nacimiento"))
 	sexo = models.CharField(max_length=1, choices=SEXOS)
 	localidad = models.CharField(max_length=50, verbose_name=_('Localidad'))
+
+	#atributos derivados de valoraciones
+	nivel_juego = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	fiabilidad_reserva = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	sociabilidad = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	
 	class Meta:
 		verbose_name = _('Jugador')
 		verbose_name_plural = _('Jugadores')
@@ -57,6 +63,11 @@ class Empresa(Actor):
 	direccion = models.CharField(max_length=200, verbose_name=_("Dirección"))
 	paypalMail = models.EmailField(verbose_name=_("PayPal e-mail"))
 
+	#atributos derivados de valoraciones
+	calidad_precio = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	personal = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	limpieza = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	
 	def __unicode__(self):
 		return self.nombre
 
@@ -85,6 +96,10 @@ class Pista(models.Model):
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)
 	foto = models.ImageField(null=True, blank=True, upload_to='images/pistas/%Y-%m-%d/', verbose_name=_('Foto de pista'))
+
+	#atributos derivados de valoraciones
+	estado = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
+	iluminacion = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
 
 	def __str__(self):
 		return self.nombre
@@ -189,3 +204,42 @@ class Comentario(models.Model):
 	class Meta:
 		verbose_name='Comentario'
 		verbose_name_plural='Comentarios'
+
+
+class Valoracion(models.Model):
+	emisor = models.ForeignKey(User)
+
+	opinion = models.TextField(max_length=200, null=True, blank=True)
+
+	def __unicode__(self):
+		return self.opinion
+
+	class Meta:
+		verbose_name='Valoracion'
+		verbose_name_plural='Valoraciones'
+
+
+class ValoracionJugador(Valoracion):
+	nivel_juego = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+	fiabilidad_reserva = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+	sociabilidad = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+
+
+class ValoracionEmpresa(Valoracion):
+	calidad_precio = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+	personal = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+	limpieza = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+
+
+class ValoracionPista(Valoracion):
+	estado = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+	iluminacion = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+
+
+
+
+
+
+
+
+
