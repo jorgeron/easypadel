@@ -9,7 +9,7 @@ from django.utils.html import conditional_escape
 from django.forms import inlineformset_factory
 from datetime import datetime,timedelta
 
-from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario, Post, Propuesta, Comentario
+from easypadel.models import Actor, Jugador, Administrador, Empresa, Pista, Horario, FranjaHoraria, DiaAsignacionHorario, Post, Propuesta, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
 
 
 class ImageInputWidget(ClearableFileInput):
@@ -172,3 +172,30 @@ class PropuestaForm(BaseForm):
           'fecha_partido': DateTimeWidget(usel10n = True, bootstrap_version=3),
           'fecha_limite': DateTimeWidget(usel10n = True, bootstrap_version=3),
         }
+
+
+class ValoracionForm(BaseForm):
+    class Meta:
+        model = Valoracion
+        fields = ['opinion']
+        widgets = {
+            'opinion': forms.Textarea(attrs={'rows':4, 'cols':15, 'style':'resize:none;', 'placeholder':'Introduzca su opinión. Máximo 200 caracteres.'}),
+        }
+
+class ValoracionJugadorForm(ValoracionForm):
+    class Meta:
+        model = ValoracionJugador
+        fields = ['nivel_juego', 'fiabilidad_reserva', 'sociabilidad'] + ValoracionForm.Meta.fields
+        widgets = ValoracionForm.Meta.widgets
+
+class ValoracionEmpresaForm(ValoracionForm):
+    class Meta:
+        model = ValoracionEmpresa
+        fields = ['calidad_precio', 'personal', 'limpieza'] + ValoracionForm.Meta.fields
+        widgets = ValoracionForm.Meta.widgets
+
+class ValoracionPistaForm(ValoracionForm):
+    class Meta:
+        model = ValoracionPista
+        fields = ['estado', 'iluminacion'] + ValoracionForm.Meta.fields
+        widgets = ValoracionForm.Meta.widgets

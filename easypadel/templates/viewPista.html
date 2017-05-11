@@ -57,6 +57,10 @@
 
           <a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "time" %} Ver horarios</a>
 
+          {% if request.user|has_group:"Jugadores" %}
+            <a href="{% url 'createValoracionPista' pista.id%}" class="btn btn-warning btn-block">{%bootstrap_icon "align-left" %} Crear valoración a pista</a>
+          {% endif %}
+
 
         </div>
       </div>

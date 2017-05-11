@@ -220,18 +220,24 @@ class Valoracion(models.Model):
 
 
 class ValoracionJugador(Valoracion):
+	jugador = models.ForeignKey(Jugador)
+
 	nivel_juego = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 	fiabilidad_reserva = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 	sociabilidad = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 
 
 class ValoracionEmpresa(Valoracion):
+	empresa = models.ForeignKey(Empresa)
+
 	calidad_precio = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 	personal = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 	limpieza = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 
 
 class ValoracionPista(Valoracion):
+	pista = models.ForeignKey(Pista)
+
 	estado = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 	iluminacion = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 

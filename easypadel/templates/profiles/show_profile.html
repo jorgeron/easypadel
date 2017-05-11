@@ -108,6 +108,13 @@
                 {% endif %}
 
                 
+                {%if show_user.user|has_group:"Empresas" and request.user|has_group:"Jugadores" %} 
+                <a class="btn btn-warning btn-block" style="margin-top: 30px;" href="{% url 'createValoracionEmpresa' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a empresa</a>
+                {% endif %}
+
+                {%if show_user.user|has_group:"Jugadores" %} 
+                <a class="btn btn-warning btn-block" style="margin-top: 30px;" href="{% url 'createValoracionJugador' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a jugador</a>
+                {% endif %}
 
                 
 

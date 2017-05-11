@@ -26,10 +26,10 @@ import re
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm, ValoracionForm, ValoracionEmpresaForm, ValoracionJugadorForm, ValoracionPistaForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento, Propuesta, Participante, Comentario
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
 
 
 def get_user_actor(user):
@@ -712,3 +712,61 @@ def deleteComentario(request, comentario_id):
     else:
         raise Http404("No tiene permiso para eliminar este comentario.")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+@user_passes_test(jugadores_group)
+def createValoracionEmpresa(request, empresa_id):
+    empresa = Empresa.objects.get(pk = empresa_id)
+
+    if request.method=='POST':
+        form = ValoracionEmpresaForm(request.POST)
+        if form.is_valid():
+
+            new_valoracion_empresa = form.save(commit=False)
+            new_valoracion_empresa.emisor = request.user
+            new_valoracion_empresa.empresa = empresa
+            new_valoracion_empresa.save()
+
+            return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':empresa.user.username}))
+    else:
+        form = ValoracionEmpresaForm()
+    return render(request, 'form.html', {'form':form, 'operation':'Crear', 'class':'Valoración'})
+
+
+@login_required
+def createValoracionJugador(request, jugador_id):
+    jugador = Jugador.objects.get(pk = jugador_id)
+
+    if request.method=='POST':
+        form = ValoracionJugadorForm(request.POST)
+        if form.is_valid():
+
+            new_valoracion_jugador = form.save(commit=False)
+            new_valoracion_jugador.emisor = request.user
+            new_valoracion_jugador.jugador = jugador
+            new_valoracion_jugador.save()
+
+            return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':jugador.user.username}))
+    else:
+        form = ValoracionJugadorForm()
+    return render(request, 'form.html', {'form':form, 'operation':'Crear', 'class':'Valoración'})
+
+
+@user_passes_test(jugadores_group)
+def createValoracionPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+
+    if request.method=='POST':
+        form = ValoracionPistaForm(request.POST)
+        if form.is_valid():
+
+            new_valoracion_pista = form.save(commit=False)
+            new_valoracion_pista.emisor = request.user
+            new_valoracion_pista.pista = pista
+            new_valoracion_pista.save()
+
+            return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+    else:
+        form = ValoracionPistaForm()
+    return render(request, 'form.html', {'form':form, 'operation':'Crear', 'class':'Valoración'})
