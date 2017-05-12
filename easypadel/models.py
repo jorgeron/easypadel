@@ -213,6 +213,7 @@ class Valoracion(models.Model):
 	emisor = models.ForeignKey(User)
 
 	opinion = models.TextField(max_length=200, null=True, blank=True)
+	fecha_publicacion = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return self.opinion

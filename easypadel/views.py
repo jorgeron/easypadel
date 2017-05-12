@@ -741,6 +741,7 @@ def createValoracionEmpresa(request, empresa_id):
             new_valoracion_empresa = form.save(commit=False)
             new_valoracion_empresa.emisor = request.user
             new_valoracion_empresa.empresa = empresa
+            new_valoracion_empresa.fecha_publicacion = datetime.now()
             new_valoracion_empresa.save()
 
             actualizarValoracionesEmpresa(empresa, new_valoracion_empresa)
@@ -762,6 +763,7 @@ def createValoracionJugador(request, jugador_id):
             new_valoracion_jugador = form.save(commit=False)
             new_valoracion_jugador.emisor = request.user
             new_valoracion_jugador.jugador = jugador
+            new_valoracion_jugador.fecha_publicacion = datetime.now()
             new_valoracion_jugador.save()
 
             actualizarValoracionesJugador(jugador, new_valoracion_jugador)
@@ -783,6 +785,7 @@ def createValoracionPista(request, pista_id):
             new_valoracion_pista = form.save(commit=False)
             new_valoracion_pista.emisor = request.user
             new_valoracion_pista.pista = pista
+            new_valoracion_pista.fecha_publicacion = datetime.now()
             new_valoracion_pista.save()
 
             actualizarValoracionesPista(pista, new_valoracion_pista)
