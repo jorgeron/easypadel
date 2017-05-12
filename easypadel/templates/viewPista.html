@@ -5,6 +5,8 @@
 {% load thumbnail %}
 {% load groups %}
 {% load static %}
+{% load mathtools %}
+{% load humanize %}
 
 {% block pagetitle %}{{pista.nombre}}{% endblock %}
 
@@ -57,13 +59,50 @@
 
           <a href="{% url 'viewHorarioPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "time" %} Ver horarios</a>
 
-          {% if request.user|has_group:"Jugadores" %}
-            <a href="{% url 'createValoracionPista' pista.id%}" class="btn btn-warning btn-block">{%bootstrap_icon "align-left" %} Crear valoración a pista</a>
-          {% endif %}
-
-
         </div>
       </div>
+
+
+      <div class="panel panel-default">
+            <div class="panel-heading"><strong>Valoraciones</strong></div>
+            <div class="panel-body">
+
+              {% if pista.valoracion_total %}
+
+                  <h1 class="text-center">{{pista.valoracion_total}} <small>/ 5</small></h1>
+                  <h2 class="text-center">
+                  {% for star in num_estrellas %}
+                    {% bootstrap_icon "star" %}
+                  {% endfor %}
+                  {% for star_empty in num_estrellas_vacias %}
+                    {% bootstrap_icon "star-empty" %}
+                  {% endfor %}</h2>
+
+                  <ul class="list-unstyled">
+                    <li><strong>Estado: </strong> {{ pista.estado }}</li>
+                    <div class="progress" style="height:9px; margin:8px 0;">
+                      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje pista.estado 5|intword %}%">
+                      </div>
+                    </div>
+                    
+                    <li><strong>Iluminación: </strong> {{ pista.iluminacion }}</li>
+                    <div class="progress" style="height:9px; margin:8px 0;">
+                      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje pista.iluminacion 5|intword %}%">
+                      </div>
+                    </div>
+
+                  </ul>
+
+              {% else %}
+                  <h4 class="text-center">Esta pista todavía no tiene valoraciones</h4>
+              {% endif %}
+
+              {% if request.user|has_group:"Jugadores" %}
+                <a href="{% url 'createValoracionPista' pista.id%}" class="btn btn-warning btn-block">{%bootstrap_icon "align-left" %} Crear valoración a pista</a>
+              {% endif %}
+
+            </div>
+        </div>
 
       {% if editable %}
       <div class="panel panel-default">

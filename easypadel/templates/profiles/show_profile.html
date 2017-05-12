@@ -6,6 +6,7 @@
 {% load groups %}
 {% load posttools %}
 {% load humanize %}
+{% load mathtools %}
 {% block pagetitle %}{{show_user.user.username}} - Perfil{% endblock %}
 {% block noheader %}
 
@@ -107,16 +108,7 @@
                   <li><strong>{% bootstrap_icon "map-marker" %}</strong> {{ show_user.direccion }}</li>
                 {% endif %}
 
-                
-                {%if show_user.user|has_group:"Empresas" and request.user|has_group:"Jugadores" %} 
-                <a class="btn btn-warning btn-block" style="margin-top: 30px;" href="{% url 'createValoracionEmpresa' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a empresa</a>
-                {% endif %}
 
-                {%if show_user.user|has_group:"Jugadores" %} 
-                <a class="btn btn-warning btn-block" style="margin-top: 30px;" href="{% url 'createValoracionJugador' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a jugador</a>
-                {% endif %}
-
-                
 
                 {%if show_user.descripcion %}
                 <br>
@@ -144,7 +136,87 @@
               </div>
             </div>
         </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Valoraciones</strong></div>
+            <div class="panel-body">
+
+              {% if show_user.valoracion_total %}
+
+                  <h1 class="text-center">{{show_user.valoracion_total}} <small>/ 5</small></h1>
+                  <h2 class="text-center">
+                  {% for star in num_estrellas %}
+                    {% bootstrap_icon "star" %}
+                  {% endfor %}
+                  {% for star_empty in num_estrellas_vacias %}
+                    {% bootstrap_icon "star-empty" %}
+                  {% endfor %}</h2>
+              
+
+                  {%if show_user.user|has_group:"Empresas" %} 
+                    <ul class="list-unstyled">
+                      <li><strong>Calidad/precio: </strong> {{ show_user.calidad_precio }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.calidad_precio 5|intword %}%">
+                        </div>
+                      </div>
+                      
+                      <li><strong>Personal: </strong> {{ show_user.personal }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.personal 5|intword %}%">
+                        </div>
+                      </div>
+
+                      <li><strong>Limpieza: </strong> {{ show_user.limpieza }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.limpieza 5|intword %}%">
+                        </div>
+                      </div>
+                    </ul>
+                    {% endif %}
+
+                    {%if show_user.user|has_group:"Jugadores" %}
+
+                    <ul class="list-unstyled">
+                      <li><strong>Nivel juego: </strong> {{ show_user.nivel_juego }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.nivel_juego 5|intword %}%">
+                        </div>
+                      </div>
+                      
+                      <li><strong>Fiabilidad reserva: </strong> {{ show_user.fiabilidad_reserva }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.fiabilidad_reserva 5|intword %}%">
+                        </div>
+                      </div>
+
+                      <li><strong>Sociabilidad: </strong> {{ show_user.sociabilidad }}</li>
+                      <div class="progress" style="height:9px; margin:8px 0;">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {% porcentaje show_user.sociabilidad 5|intword %}%">
+                        </div>
+                      </div>
+                    </ul>
+                    {% endif %}
+
+              {% else %}
+                  <h4 class="text-center">Este usuario todavía no tiene valoraciones</h4>
+              {% endif %}
+
+              
+
+              {% if show_user.user|has_group:"Empresas" and request.user|has_group:"Jugadores" %}
+                <a class="btn btn-warning btn-block" style="margin-top: 10px;" href="{% url 'createValoracionEmpresa' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a empresa</a>
+              {% endif %}
+
+
+              {% if show_user.user|has_group:"Jugadores" and not show_user.user == request.user %} 
+                <a class="btn btn-warning btn-block" style="margin-top: 30px;" href="{% url 'createValoracionJugador' show_user.id %}">{% bootstrap_icon "align-left" %} Crear valoración a jugador</a>
+              {% endif %}
+
+            </div>
         </div>
+
         </div>
       	
       </aside>

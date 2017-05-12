@@ -189,7 +189,14 @@ def listPistas(request, user_id):
 def viewPista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
     editable = (request.user == pista.empresa.user)
-    return render(request, 'viewPista.html', {'pista':pista, 'editable':editable})
+
+    num_estrellas = 0
+    num_estrellas_vacias = 5
+    if pista.valoracion_total:
+        num_estrellas = round(pista.valoracion_total)
+        num_estrellas_vacias = 5 - num_estrellas
+    return render(request, 'viewPista.html', {'pista':pista, 'editable':editable, 'num_estrellas':range(num_estrellas),
+        'num_estrellas_vacias':range(num_estrellas_vacias)})
 
 def auxPistaForm(instance, *args):
     return PistaForm(instance = instance, *args)
@@ -456,8 +463,16 @@ def viewPerfil(request, username):
     show_user = get_user_actor(user)
     editable = (show_user.user == request.user)
     posts = get_page(request, user.post_set.order_by('-fecha_publicacion'))
+
+    num_estrellas = 0
+    num_estrellas_vacias = 5
+    if show_user.valoracion_total:
+        num_estrellas = round(show_user.valoracion_total)
+        num_estrellas_vacias = 5 - num_estrellas
+
     return render(request, 'profiles/show_profile.html', {'show_user': show_user, 
-        'editable': editable, 'posts':posts, 'postform': PostForm()})
+        'editable': editable, 'posts':posts, 'postform': PostForm(), 'num_estrellas':range(num_estrellas), 
+        'num_estrellas_vacias':range(num_estrellas_vacias)})
 
 
 
@@ -728,6 +743,8 @@ def createValoracionEmpresa(request, empresa_id):
             new_valoracion_empresa.empresa = empresa
             new_valoracion_empresa.save()
 
+            actualizarValoracionesEmpresa(empresa, new_valoracion_empresa)
+
             return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':empresa.user.username}))
     else:
         form = ValoracionEmpresaForm()
@@ -746,6 +763,8 @@ def createValoracionJugador(request, jugador_id):
             new_valoracion_jugador.emisor = request.user
             new_valoracion_jugador.jugador = jugador
             new_valoracion_jugador.save()
+
+            actualizarValoracionesJugador(jugador, new_valoracion_jugador)
 
             return HttpResponseRedirect(reverse('viewPerfil', kwargs={'username':jugador.user.username}))
     else:
@@ -766,7 +785,87 @@ def createValoracionPista(request, pista_id):
             new_valoracion_pista.pista = pista
             new_valoracion_pista.save()
 
+            actualizarValoracionesPista(pista, new_valoracion_pista)
+
             return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
     else:
         form = ValoracionPistaForm()
     return render(request, 'form.html', {'form':form, 'operation':'Crear', 'class':'Valoración'})
+
+
+def actualizarValoracionesEmpresa(empresa, valoracion_empresa):
+    valoraciones_empresa = ValoracionEmpresa.objects.filter(empresa = empresa)
+
+    if len(valoraciones_empresa) > 1:
+
+        calidad_precio_sum = 0
+        personal_sum = 0
+        limpieza_sum = 0
+        for v in valoraciones_empresa:
+            calidad_precio_sum += v.calidad_precio
+            personal_sum += v.personal
+            limpieza_sum += v.limpieza
+
+        empresa.calidad_precio = calidad_precio_sum / len(valoraciones_empresa)
+        empresa.personal = personal_sum / len(valoraciones_empresa)
+        empresa.limpieza = limpieza_sum / len(valoraciones_empresa)
+
+    else:
+        empresa.calidad_precio = valoracion_empresa.calidad_precio
+        empresa.personal = valoracion_empresa.personal
+        empresa.limpieza = valoracion_empresa.limpieza
+
+    empresa.valoracion_total = (empresa.calidad_precio + empresa.personal + empresa.limpieza) / 3
+    empresa.save()
+
+
+def actualizarValoracionesJugador(jugador, valoracion_jugador):
+    valoraciones_jugador = ValoracionJugador.objects.filter(jugador = jugador)
+
+    if len(valoraciones_jugador) > 1:
+
+        nivel_juego_sum = 0
+        fiabilidad_reserva_sum = 0
+        sociabilidad_sum = 0
+        for v in valoraciones_jugador:
+            nivel_juego_sum += v.nivel_juego
+            fiabilidad_reserva_sum += v.fiabilidad_reserva
+            sociabilidad_sum += v.sociabilidad
+
+        jugador.nivel_juego = nivel_juego_sum / len(valoraciones_jugador)
+        jugador.fiabilidad_reserva = fiabilidad_reserva_sum / len(valoraciones_jugador)
+        jugador.sociabilidad = sociabilidad_sum / len(valoraciones_jugador)
+    else:
+        jugador.nivel_juego = valoracion_jugador.nivel_juego
+        jugador.fiabilidad_reserva = valoracion_jugador.fiabilidad_reserva
+        jugador.sociabilidad = valoracion_jugador.sociabilidad
+
+    jugador.valoracion_total = (jugador.nivel_juego + jugador.fiabilidad_reserva + jugador.sociabilidad) / 3
+    jugador.save()
+
+
+def actualizarValoracionesPista(pista, valoracion_pista):
+    valoraciones_pista = ValoracionPista.objects.filter(pista = pista)
+
+    if len(valoraciones_pista) > 1:
+
+        estado_sum = 0
+        iluminacion_sum = 0
+
+        for v in valoraciones_pista:
+            estado_sum += v.estado
+            iluminacion_sum += v.iluminacion
+
+        pista.estado = estado_sum / len(valoraciones_pista)
+        pista.iluminacion = iluminacion_sum / len(valoraciones_pista)
+    else:
+        pista.estado = valoracion_pista.estado
+        pista.iluminacion = valoracion_pista.iluminacion
+
+    pista.valoracion_total = (pista.estado + pista.iluminacion) / 2
+    pista.save()
+
+
+
+
+
