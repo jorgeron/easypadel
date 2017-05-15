@@ -5,6 +5,7 @@
 {% load groups %}
 {% load posttools %}
 {% load humanize %}
+{% load thumbnail %}
 {% load mathtools %}
 {% block pagetitle %} Inicio {% endblock %}
 
@@ -14,7 +15,9 @@
 	
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				¡Bienvenido {{actor.nombre}}!
+			<a href="{% url 'viewPerfil' actor.user.username %}"><img class="img-circle" src="{% if actor.user.empresa%} {%thumbnail actor.user.empresa.foto_perfil|default:'default_profile.png' 40x40 crop %}{%elif actor.user.jugador%}{%thumbnail actor.user.jugador.foto_perfil|default:'default_profile.png' 40x40 crop %}{%else%}{%thumbnail actor.user.administrador.foto_perfil|default:'default_profile.png' 40x40 crop %}{%endif%}" alt=""></a>
+				
+			¡Bienvenido {{actor.nombre}}!
 			</div>
 			
 			<ul class="list-group">
