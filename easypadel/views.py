@@ -72,9 +72,17 @@ def home(request):
     else:
         user = User.objects.get(pk = request.user.id)
         posts = get_page(request, Post.objects.filter(Q(user=user) | Q(user__seguidores__origen=request.user)).order_by('-fecha_publicacion').distinct())
-        #posts = get_page(request, Post.objects.filter(user=user).order_by('-fecha_publicacion').distinct())
 
-        return render(request, 'inicio.html', {'actor':get_user_actor(user), 'postform': PostForm(), 'posts':posts})
+
+        actor = get_user_actor(user)
+        num_estrellas = 0
+        num_estrellas_vacias = 5
+        if actor.valoracion_total:
+            num_estrellas = round(actor.valoracion_total)
+            num_estrellas_vacias = 5 - num_estrellas
+
+        return render(request, 'inicio.html', {'actor':actor, 'postform': PostForm(), 'posts':posts, 'num_estrellas':range(num_estrellas), 
+        'num_estrellas_vacias':range(num_estrellas_vacias)})
 
 
 
@@ -874,9 +882,9 @@ def actualizarValoracionesPista(pista, valoracion_pista):
 def listValoracionesUsuario(request, user_id):
     user = User.objects.get(pk = user_id)
     if jugadores_group(user):
-        valoraciones = get_page(request, ValoracionJugador.objects.filter(jugador = Jugador.objects.get(user=user)))
+        valoraciones = get_page(request, ValoracionJugador.objects.filter(jugador = Jugador.objects.get(user=user)).order_by('-fecha_publicacion').distinct())
     else:
-        valoraciones = get_page(request, ValoracionEmpresa.objects.filter(empresa = Empresa.objects.get(user=user)))
+        valoraciones = get_page(request, ValoracionEmpresa.objects.filter(empresa = Empresa.objects.get(user=user)).order_by('-fecha_publicacion').distinct())
 
     return render(request, 'listValoraciones.html', {'valoraciones':valoraciones})
 
@@ -884,6 +892,6 @@ def listValoracionesUsuario(request, user_id):
 @login_required
 def listValoracionesPista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
-    valoraciones = get_page(request, ValoracionPista.objects.filter(pista = pista))
+    valoraciones = get_page(request, ValoracionPista.objects.filter(pista = pista).order_by('-fecha_publicacion').distinct())
     return render(request, 'listValoraciones.html', {'valoraciones':valoraciones})
 

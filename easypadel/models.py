@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django import forms
 from embed_video.fields import EmbedVideoField
 
 
