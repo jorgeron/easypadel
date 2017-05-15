@@ -93,6 +93,8 @@
 
                   </ul>
 
+                  <a href="{% url 'listValoracionesPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "th-list" %} Ver valoraciones</a>
+
               {% else %}
                   <h4 class="text-center">Esta pista todavía no tiene valoraciones</h4>
               {% endif %}

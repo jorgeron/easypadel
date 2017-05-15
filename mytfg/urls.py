@@ -49,7 +49,10 @@ urlpatterns = [
     url(r'^empresa/valoracion/create/(?P<empresa_id>[0-9]+)/$', easypadel.views.createValoracionEmpresa, name='createValoracionEmpresa'),
     url(r'^jugador/valoracion/create/(?P<jugador_id>[0-9]+)/$', easypadel.views.createValoracionJugador, name='createValoracionJugador'),
     url(r'^pista/valoracion/create/(?P<pista_id>[0-9]+)/$', easypadel.views.createValoracionPista, name='createValoracionPista'),
-    
+    url(r'^usuario/valoracion/list/(?P<user_id>[0-9]+)/$', easypadel.views.listValoracionesUsuario, name='listValoracionesUsuario'),
+    url(r'^pista/valoracion/list/(?P<pista_id>[0-9]+)/$', easypadel.views.listValoracionesPista, name='listValoracionesPista'),
+
+
     url(r'^empresas/list$', easypadel.views.listEmpresas, name='listEmpresas'),
 
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),

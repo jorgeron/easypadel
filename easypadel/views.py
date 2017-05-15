@@ -870,5 +870,20 @@ def actualizarValoracionesPista(pista, valoracion_pista):
 
 
 
+@login_required
+def listValoracionesUsuario(request, user_id):
+    user = User.objects.get(pk = user_id)
+    if jugadores_group(user):
+        valoraciones = get_page(request, ValoracionJugador.objects.filter(jugador = Jugador.objects.get(user=user)))
+    else:
+        valoraciones = get_page(request, ValoracionEmpresa.objects.filter(empresa = Empresa.objects.get(user=user)))
 
+    return render(request, 'listValoraciones.html', {'valoraciones':valoraciones})
+
+
+@login_required
+def listValoracionesPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    valoraciones = get_page(request, ValoracionPista.objects.filter(pista = pista))
+    return render(request, 'listValoraciones.html', {'valoraciones':valoraciones})
 

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load valoraciontools %}
+{% load thumbnail %}
+
+{% block pagetitle %} Valoraciones {% endblock %} 
+{% block pageheader %}
+	<h1>Valoraciones</h1>
+ {% endblock %} 
+
+{% block pagebody %}
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+<div class="col-md-8 col-sm-12 col-xs-12">
+
+	{% for valoracion in valoraciones %}
+		{% valoracionview valoracion %}
+	{% endfor %}
+
+	{% if valoraciones %}
+		{% bootstrap_pagination valoraciones %}
+	{% endif %}
+
+	<div>
+	<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+	</button>
+	</div>
+</div>
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+
+{% endblock %}
