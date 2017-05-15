@@ -199,3 +199,10 @@ class ValoracionPistaForm(ValoracionForm):
         model = ValoracionPista
         fields = ['estado', 'iluminacion'] + ValoracionForm.Meta.fields
         widgets = ValoracionForm.Meta.widgets
+
+
+class BuscarUsuariosForm(forms.Form):
+    texto = forms.CharField(required=True, widget=forms.TextInput(attrs={'required': "required", 'max_length':20, 'placeholder':'Buscar usuarios...'}))
+    def __init__(self, *args, **kwargs):
+        super(BuscarUsuariosForm, self).__init__(*args, **kwargs)
+        self.fields['texto'].label = ''

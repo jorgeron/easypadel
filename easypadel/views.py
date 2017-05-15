@@ -29,7 +29,7 @@ from easypadel.decorators import anonymous_required, admin_group, jugadores_grou
 from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm, ValoracionForm, ValoracionEmpresaForm, ValoracionJugadorForm, ValoracionPistaForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Administrador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
 
 
 def get_user_actor(user):
@@ -895,3 +895,15 @@ def listValoracionesPista(request, pista_id):
     valoraciones = get_page(request, ValoracionPista.objects.filter(pista = pista).order_by('-fecha_publicacion').distinct())
     return render(request, 'listValoraciones.html', {'valoraciones':valoraciones})
 
+
+@login_required
+def buscarUsuarios(request):
+
+    if request.method == 'POST':
+        texto = request.POST.get('texto')
+        if texto:
+            usuarios = User.objects.filter(username__icontains = texto).order_by('username').distinct()
+            lista = []
+            for u in usuarios:
+                lista.append(get_user_actor(u))
+    return render(request, 'listUsers.html', {'list':lista})

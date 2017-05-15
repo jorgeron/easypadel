@@ -21,6 +21,22 @@
                 <li><a href="{% url 'index' %}">{% bootstrap_icon "home" %} Inicio</a></li>
             </ul>
 
+            <ul class="nav navbar-nav">
+                <li> 
+
+                  <form class="navbar-form" id='searchform' enctype="multipart/form-data" method='post' action='{% url 'buscarUsuarios' %}'>{% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar usuarios..." name="texto">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">{% bootstrap_icon "search" %}</button>
+                        </div>
+                    </div>
+                  </form>
+
+                </li>
+            </ul>
+            
+
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"Administrators"%}
@@ -32,6 +48,7 @@
                             </ul>
                         </li>
                     {% endif %}
+
 
                     {% if request.user|has_group:"Empresas"%}
                         <li><a href="{% url 'listPistas' request.user.id %}">{% bootstrap_icon "list" %} Mis Pistas</a></li>
