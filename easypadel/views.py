@@ -189,7 +189,7 @@ def deleteUser(request):
 
 @login_required
 def listPistas(request, user_id):
-    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id))
+    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id)).order_by('-valoracion_total')
     propietario = (user_id == str(request.user.id))
     return render(request, 'listPistas.html', {'list':pistas, 'propietario':propietario})
 

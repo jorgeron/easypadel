@@ -7,17 +7,19 @@
 <h1>Mis Horarios</h1> {% endblock %} 
 {% block pagebody %}
 
+<div class="row">
 {% for horario in list %}
+<div class="col-md-3 m-b-lg">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<div class="media">
-				<div class="media-body">
-					<h4 class="media-heading"><a href="{% url 'viewHorario' horario.id %}">{{horario.nombre}}</a></h4>
-				</div>
-			</div>
+		<div class="panel-body text-center">
+
+			<h4 class="media-heading"><a href="{% url 'viewHorario' horario.id  %}">{{horario.nombre}}</a></h4>
+
 		</div>
 	</div>
+</div>
 {% endfor %}
+</div>
 
 <p><a class="btn btn-success btn-lg" href="{% url 'createHorario' %}" role="button">{% bootstrap_icon "plus" %} Añadir horario</a></p>
 <button class="btn btn-danger" onClick="window.history.back();return false;">

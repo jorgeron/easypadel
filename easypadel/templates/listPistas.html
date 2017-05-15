@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load static %}
+{% load valoraciontools %}
 {% load thumbnail %}
 {% block pagetitle %} Pistas {% endblock %} 
 {% block pageheader %}
@@ -31,6 +32,18 @@
 		<div class="panel-body text-center">
 
 			<h4 class="media-heading"><a href="{% url 'viewPista' pista.id %}">{{pista.nombre}}</a></h4>
+			{% if pista.valoracion_total %}
+				{% numeroEstrellas pista as num_estrellas %}
+				{% numeroEstrellasVacias pista as num_estrellas_vacias %}
+				{% for i in num_estrellas %}
+					{% bootstrap_icon "star" %}
+				{% endfor %}
+				{% for i in num_estrellas_vacias %}
+					{% bootstrap_icon "star-empty" %}
+				{% endfor %}
+			{% else %}	 
+				<span>?</span> {% bootstrap_icon "star" %}
+			{% endif %}
 
 		</div>
 	</div>
