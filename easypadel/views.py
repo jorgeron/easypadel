@@ -416,7 +416,7 @@ def viewHorarioPista(request, pista_id):
 
 @user_passes_test(jugadores_group)
 def listEmpresas(request):
-    empresas = Empresa.objects.all()
+    empresas = Empresa.objects.all().order_by('-valoracion_total')
     return render(request, 'listEmpresas.html', {'list':empresas})
 
 

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load static %}
+{% load valoraciontools %}
 {% load thumbnail %}
 {% block pagetitle %} Usuarios {% endblock %} 
 {% block pageheader %}
@@ -30,10 +31,26 @@
 			<h4 class="media-heading"><a href="{% url 'viewPerfil' actor.user.username %}">{{actor.nombre}}</a></h4>
 			<a href="{% url 'viewPerfil' actor.user.username %}"><p class="text-center">@{{actor.user.username}}</p></a>
 
+			{% if actor.valoracion_total %}
+				{% numeroEstrellas actor as num_estrellas %}
+				{% numeroEstrellasVacias actor as num_estrellas_vacias %}
+				{% for i in num_estrellas %}
+					{% bootstrap_icon "star" %}
+				{% endfor %}
+				{% for i in num_estrellas_vacias %}
+					{% bootstrap_icon "star-empty" %}
+				{% endfor %}
+			{% else %}	 
+				<span>?</span> {% bootstrap_icon "star" %}
+			{% endif %}
+
 		</div>
 	</div>
 </div>
 {% endfor %}
 </div>
 
+<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+		</button>
 {% endblock %} 

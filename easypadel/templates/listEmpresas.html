@@ -2,29 +2,56 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load thumbnail %}
+{% load valoraciontools %}
 {% block pagetitle %} Empresas {% endblock %} 
 {% block pageheader %}
 <h1>Empresas</h1> {% endblock %} 
 {% block pagebody %}
 
+
+<div class="row">
 {% for empresa in list %}
+
+<div class="col-md-3 m-b-lg">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<div class="media">
-				<div class="media-left">
-					<a href="{% url 'viewPerfil' empresa.user.username %}">
-								<img class="media-object img-rounded" src="{%thumbnail empresa.foto_perfil|default:'no-image.png' 48x48 crop %}" alt="{{empresa.nombre}}">
-							</a>
-				</div>
+		<div class="panel-heading" style="padding: 0px; border:0px;" >
 
 
-				<div class="media-body">
-					<h4 class="media-heading"><a href="{% url 'viewPerfil' empresa.user.username %}">{{empresa.nombre}}</a></h4>
-				</div>
-			</div>
+			<a href="{% url 'viewPerfil' empresa.user.username %}">
+						<img class="media-object " src="{%thumbnail empresa.foto_cabecera|default:'default-header.png' 261x110 crop %}" alt="{{empresa.nombre}}">
+			</a>
+
+
+		</div>
+		<div class="panel-body text-center">
+			<a href="{% url 'viewPerfil' empresa.user.username %}">
+				<img class="panel-profile-img" src="{%thumbnail empresa.foto_perfil|default:'default_profile.png' 100x100 crop %}">
+			</a>
+
+			<h4 class="media-heading"><a href="{% url 'viewPerfil' empresa.user.username %}">{{empresa.nombre}}</a></h4>
+			<a href="{% url 'viewPerfil' empresa.user.username %}"><p class="text-center">@{{empresa.user.username}}</p></a>
+
+			{% if empresa.valoracion_total %}
+				{% numeroEstrellas empresa as num_estrellas %}
+				{% numeroEstrellasVacias empresa as num_estrellas_vacias %}
+				{% for i in num_estrellas %}
+					{% bootstrap_icon "star" %}
+				{% endfor %}
+				{% for i in num_estrellas_vacias %}
+					{% bootstrap_icon "star-empty" %}
+				{% endfor %}
+			{% else %}	 
+				<span>?</span> {% bootstrap_icon "star" %}
+			{% endif %}
+
 		</div>
 	</div>
+</div>
 {% endfor %}
+</div>
 
+<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+		</button>
 
 {% endblock %} 
