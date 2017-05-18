@@ -21,6 +21,7 @@
                 <li><a href="{% url 'index' %}">{% bootstrap_icon "home" %} Inicio</a></li>
             </ul>
 
+            {% if request.user.is_authenticated %}
             <ul class="nav navbar-nav">
                 <li> 
 
@@ -35,6 +36,7 @@
 
                 </li>
             </ul>
+            {% endif %}
             
 
             <ul class="nav navbar-nav navbar-right">

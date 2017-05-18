@@ -59,6 +59,7 @@ def home(request):
 
         if request.method == 'POST':
             form = AuthenticationForm(data=request.POST)
+            print(request.POST)
             if form.is_valid():
                 user = authenticate(username=request.POST[
                                     'username'], password=request.POST['password'])
@@ -75,9 +76,10 @@ def home(request):
 
 
         actor = get_user_actor(user)
+
         num_estrellas = 0
         num_estrellas_vacias = 5
-        if actor.valoracion_total:
+        if not actor.user.groups.filter(name='Administrators').exists() and actor.valoracion_total:
             num_estrellas = round(actor.valoracion_total)
             num_estrellas_vacias = 5 - num_estrellas
 
@@ -474,7 +476,7 @@ def viewPerfil(request, username):
 
     num_estrellas = 0
     num_estrellas_vacias = 5
-    if show_user.valoracion_total:
+    if not user.groups.filter(name='Administrators').exists() and show_user.valoracion_total:
         num_estrellas = round(show_user.valoracion_total)
         num_estrellas_vacias = 5 - num_estrellas
 
@@ -526,7 +528,7 @@ def createPost(request):
 @login_required
 def deletePost(request, post_id):
     post = Post.objects.get(pk = post_id)
-    if(request.user == post.user or request.user.groups.filter(name='Administradores').exists()):
+    if(request.user == post.user or request.user.groups.filter(name='Administrators').exists()):
         post.delete()
     else:
         raise Http404("No tiene permiso para eliminar este post.")
@@ -730,7 +732,7 @@ def createComentario(request, propuesta_id):
 def deleteComentario(request, comentario_id):
     comentario = Comentario.objects.get(pk = comentario_id)
     jugador = Jugador.objects.get(user = request.user)
-    if(jugador == comentario.jugador or request.user.groups.filter(name='Administradores').exists()):
+    if(jugador == comentario.jugador or request.user.groups.filter(name='Administrators').exists()):
         comentario.delete()
     else:
         raise Http404("No tiene permiso para eliminar este comentario.")
@@ -905,5 +907,6 @@ def buscarUsuarios(request):
             usuarios = User.objects.filter(username__icontains = texto).order_by('username').distinct()
             lista = []
             for u in usuarios:
-                lista.append(get_user_actor(u))
+                if empresas_group(u) or jugadores_group(u):
+                    lista.append(get_user_actor(u))
     return render(request, 'listUsers.html', {'list':lista})

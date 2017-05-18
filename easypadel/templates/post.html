@@ -9,7 +9,7 @@
 	
 	<small>&bull; {{post.fecha_publicacion|naturaltime}}</small>
 	
-	{%if post.user == user or user|has_group:"Administradores"%}
+	{%if post.user == user or user|has_group:"Administrators"%}
 		<small><a href="#delete-{{post.id}}"  data-toggle="modal" data-dismiss="modal">{%bootstrap_icon "remove"%}</a></small>
 		<div class="modal fade" id="delete-{{post.id}}">
 			<div class="modal-dialog">
