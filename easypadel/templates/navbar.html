@@ -27,7 +27,7 @@
 
                   <form class="navbar-form" id='searchform' enctype="multipart/form-data" method='post' action='{% url 'buscarUsuarios' %}'>{% csrf_token %}
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar usuarios..." name="texto">
+                        <input type="text" class="form-control" placeholder="Buscar usuarios..." name="texto" required="True">
                         <div class="input-group-btn">
                             <button class="btn btn-primary" type="submit">{% bootstrap_icon "search" %}</button>
                         </div>

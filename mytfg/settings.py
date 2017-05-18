@@ -30,7 +30,7 @@ LOGIN_URL = "/404.html"
 
 
 #url ngrok o dominio externo de la app
-URL_EXTERNA = '9b32aa30.ngrok.io'
+URL_EXTERNA = '3bb78435.ngrok.io'
 
 #PayPal configuration
 PAYPAL_URL = os.environ.get('PAYPAL_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr')

@@ -92,7 +92,7 @@ class HorarioForm(BaseForm):
 class FranjaHorariaForm(ModelForm):
     class Meta:
         model = FranjaHoraria
-        exclude = ('dia_asignacion', 'asignada')
+        exclude = ('dia_asignacion', 'asignada', 'jugador')
         widgets = {
             'hora_inicio' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'}),
             'hora_fin' : TimeInput(attrs={'placeholder':'HH:MM', 'format':'%H:%M'})

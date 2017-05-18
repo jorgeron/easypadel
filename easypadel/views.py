@@ -903,9 +903,9 @@ def buscarUsuarios(request):
 
     if request.method == 'POST':
         texto = request.POST.get('texto')
+        lista = []
         if texto:
             usuarios = User.objects.filter(username__icontains = texto).order_by('username').distinct()
-            lista = []
             for u in usuarios:
                 if empresas_group(u) or jugadores_group(u):
                     lista.append(get_user_actor(u))
