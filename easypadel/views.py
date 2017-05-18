@@ -687,7 +687,7 @@ def apuntarsePartido(request, propuesta_id):
     else:
         raise Http404("No tiene permiso para unirse a este partido")
 
-    return viewPropuesta(request, propuesta_id)
+    return HttpResponseRedirect(reverse('viewPropuesta', kwargs={'propuesta_id':propuesta_id}))
 
 
 def fechaLimiteFutura(propuesta):
