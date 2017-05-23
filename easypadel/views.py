@@ -733,7 +733,7 @@ def deletePropuesta(request, propuesta_id):
         propuesta.delete()
     else:
         raise Http404("No tiene permiso para eliminar esta propuesta.")
-    return listPropuestas(request)
+    return HttpResponseRedirect(reverse('listPropuestas'))
 
 
 @login_required
