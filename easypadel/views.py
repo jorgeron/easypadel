@@ -26,7 +26,7 @@ import re
 
 
 from easypadel.decorators import anonymous_required, admin_group, jugadores_group, empresas_group
-from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm, ValoracionForm, ValoracionEmpresaForm, ValoracionJugadorForm, ValoracionPistaForm
+from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm, ValoracionForm, ValoracionEmpresaForm, ValoracionJugadorForm, ValoracionPistaForm, FiltroPartidosForm
 from django.forms import inlineformset_factory
 
 from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Administrador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
@@ -672,15 +672,32 @@ def listPropuestas(request, username):
 
 @login_required
 def listPropuestasAbiertas(request):
-    rightNow = datetime.now()
+
+    if request.method == 'POST':
+        formPartidos = FiltroPartidosForm(request.POST)
+        if formPartidos.is_valid():
+            fecha_inicio = formPartidos.cleaned_data['fecha_inicio']
+            fecha_fin = formPartidos.cleaned_data['fecha_fin']
+            lugar = formPartidos.cleaned_data['lugar']
+    else:
+        formPartidos = FiltroPartidosForm()
+
+        fecha_inicio = datetime.now()
+        fecha_fin = fecha_inicio + timedelta(days=7)
+        formPartidos.fecha_inicio = fecha_inicio
+        formPartidos.fecha_fin = fecha_fin
+
+        lugar = ''
+
+
+
     propuestas = []
-    propuestas_consulta = Propuesta.objects.filter(fecha_limite__gte=rightNow)
+    propuestas_consulta = Propuesta.objects.filter(fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar).order_by('fecha_partido')
     for p in propuestas_consulta:
         if p.participante_set.count() < 3:
             propuestas.append(p)
 
-    propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
-    return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':False})
+    return render(request, 'listPropuestas.html', {'list':propuestas, 'creador':False, 'formPartidos':formPartidos})
 
 @user_passes_test(jugadores_group)
 def deletePropuesta(request, propuesta_id):

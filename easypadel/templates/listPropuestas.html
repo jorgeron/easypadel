@@ -3,6 +3,8 @@
 {% load static %}
 {% load propuestatools %}
 {% load thumbnail %}
+
+{% block head %}{{ formPartidos.media }}{% endblock %}
 {% block pagetitle %} Propuestas {% endblock %} 
 {% block pageheader %}
 
@@ -16,17 +18,37 @@
 {% block pagebody %}
 
 <div class="row">
-  <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+  <div class="primary col-md-8 col-sm-12 col-xs-12">
   	<ul class="event-list">
 
-{% for propuesta in list %}
+		{% for propuesta in list %}
 
-	<li>{% propuestaview propuesta request.user %}</li>
+			<li>{% propuestaview propuesta request.user %}</li>
 
-{% endfor %}
+		{% endfor %}
 
 	</ul>
   </div>
+
+  {% if formPartidos %}
+  <div class="secondary col-md-4 col-sm-12 col-xs-12">
+  	<aside class="section">
+        <div class="section-inner">
+          <form id='formPartidos' enctype="multipart/form-data" method='post' action=''>{% csrf_token %}
+            
+            {% bootstrap_form formPartidos %}
+
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">
+            {% bootstrap_icon "ok" %} Buscar partidos
+            </button>
+            {% endbuttons %}
+
+          </form>
+        </div>
+      </aside>
+  </div>
+  {% endif %}
 </div>
 
 <button class="btn btn-danger" onClick="window.history.back();return false;">

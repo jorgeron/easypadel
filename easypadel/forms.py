@@ -206,3 +206,12 @@ class BuscarUsuariosForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(BuscarUsuariosForm, self).__init__(*args, **kwargs)
         self.fields['texto'].label = ''
+
+
+class FiltroPartidosForm(forms.Form):
+    hoy = datetime.now().date()
+    hoy_mas_7_dias = hoy + timedelta(days=7)
+
+    fecha_inicio = forms.DateField(initial=hoy, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
+    fecha_fin = forms.DateField(initial=hoy_mas_7_dias, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
+    lugar = forms.CharField(required=False, widget=forms.TextInput(attrs={'max_length':20, 'placeholder':'Lugar (opcional)'}))
