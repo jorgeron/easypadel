@@ -45,6 +45,12 @@
 				<span>?</span> {% bootstrap_icon "star" %}
 			{% endif %}
 
+			{% if propietario %}
+				{% if not pista.visible %}
+					<span style="color:red;">{% bootstrap_icon "eye-close" %}</span>
+				{% endif %}
+			{% endif %}
+
 		</div>
 	</div>
 </div>

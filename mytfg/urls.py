@@ -57,6 +57,8 @@ urlpatterns = [
 
     url(r'^pistas/view/(?P<pista_id>[0-9]+)/$', easypadel.views.viewPista, name='viewPista'),
     url(r'^pistas/viewHorarioPista/(?P<pista_id>[0-9]+)/$', easypadel.views.viewHorarioPista, name='viewHorarioPista'),
+    url(r'^pistas/ocultar/(?P<pista_id>[0-9]+)/$', easypadel.views.ocultarPista, name='ocultarPista'),
+    url(r'^pistas/mostrar/(?P<pista_id>[0-9]+)/$', easypadel.views.mostrarPista, name='mostrarPista'),
     url(r'^horarios/view/(?P<horario_id>[0-9]+)/$', easypadel.views.viewHorario, name='viewHorario'),
 
     url(r'^pistas/alquilar/(?P<franjaHoraria_id>[0-9]+)/$', easypadel.views.alquilarFranja, name='alquilarFranja'),

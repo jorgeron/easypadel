@@ -54,6 +54,9 @@
                 <li><strong>Tipo de superficie: </strong> {{pista.tipo_superficie}}</li>
                 <li><strong>Tipo pared: </strong> {{pista.tipo_pared}} </li>
                 <li><strong>Cubierta: </strong> {% if pista.cubierta %} Sí {% else %} No {%endif%} </li>
+                {% if editable %}
+                  <li><strong>Visible: </strong> {% if pista.visible %} Sí {% else %} No {%endif%} </li>
+                {% endif %}
 
           </ul>
 
@@ -117,6 +120,15 @@
           <a href="{% url 'editPista' pista.id%}" class="btn btn-primary btn-block">{%bootstrap_icon "edit" %} Editar Pista</a>
 
           <a class="btn btn-primary btn-block" href="{% url 'asignarHorario' pista.id %}">{% bootstrap_icon "list-alt" %} Asignar Horario</a>
+
+          {% if pista.visible and not tieneReservasFuturas %}
+            <a class="btn btn-warning btn-block" href="{% url 'ocultarPista' pista.id %}" >{% bootstrap_icon "eye-close" %} Ocultar pista</a>
+          {% endif %}
+
+          {% if not pista.visible %}
+            <a class="btn btn-success btn-block" href="{% url 'mostrarPista' pista.id %}" >{% bootstrap_icon "eye-open" %} Mostrar pista</a>
+          {% endif %}
+          
 
           <a class="btn btn-danger btn-block" style="margin-top: 50px;" href="#delete-pista" data-toggle="modal" data-dismiss="modal">{% bootstrap_icon "remove" %} Eliminar pista</a>
 

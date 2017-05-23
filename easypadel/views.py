@@ -191,8 +191,12 @@ def deleteUser(request):
 
 @login_required
 def listPistas(request, user_id):
-    pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id)).order_by('-valoracion_total')
     propietario = (user_id == str(request.user.id))
+    if propietario:
+        pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id)).order_by('-valoracion_total')
+    else:
+        pistas = Pista.objects.filter(empresa=Empresa.objects.get(user_id = user_id), visible=True).order_by('-valoracion_total')
+    
     return render(request, 'listPistas.html', {'list':pistas, 'propietario':propietario})
 
 @login_required
@@ -200,13 +204,16 @@ def viewPista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
     editable = (request.user == pista.empresa.user)
 
+    if not editable and not pista.visible:
+        raise Http404('No tiene permiso para ver esta pista')
+
     num_estrellas = 0
     num_estrellas_vacias = 5
     if pista.valoracion_total:
         num_estrellas = round(pista.valoracion_total)
         num_estrellas_vacias = 5 - num_estrellas
     return render(request, 'viewPista.html', {'pista':pista, 'editable':editable, 'num_estrellas':range(num_estrellas),
-        'num_estrellas_vacias':range(num_estrellas_vacias)})
+        'num_estrellas_vacias':range(num_estrellas_vacias), 'tieneReservasFuturas':tieneReservasFuturas(pista)})
 
 def auxPistaForm(instance, *args):
     return PistaForm(instance = instance, *args)
@@ -261,7 +268,39 @@ def createPista(request):
     return render(request, 'form.html', {'form':form, 'class':_('Pista'), 'operation':_('Crear')})
 
 
+@user_passes_test(empresas_group)
+def ocultarPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    if pista.empresa.user == request.user and pista.visible and not tieneReservasFuturas(pista):
+        pista.visible = False
+        pista.save()
+        return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+    else:
+        raise Http404("No puede ocultar esta pista")
 
+
+
+def tieneReservasFuturas(pista):
+    result = False
+    dias_asignados = DiaAsignacionHorario.objects.filter(pista = pista, dia__gte=datetime.now())
+    for d in dias_asignados:
+        franjas_horarias = FranjaHoraria.objects.filter(dia_asignacion = d)
+        for franja in franjas_horarias:
+            if franja.jugador:
+                return True
+
+    return result
+
+
+@user_passes_test(empresas_group)
+def mostrarPista(request, pista_id):
+    pista = Pista.objects.get(pk = pista_id)
+    if pista.empresa.user == request.user and not pista.visible:
+        pista.visible = True
+        pista.save()
+        return HttpResponseRedirect(reverse('viewPista', kwargs={'pista_id':pista_id}))
+    else:
+        raise Http404("No puede mostrar esta pista")
 
 
 @login_required
