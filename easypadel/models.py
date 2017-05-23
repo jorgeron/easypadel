@@ -99,6 +99,7 @@ class Pista(models.Model):
 	cubierta = models.BooleanField(default=False)
 	descripcion = models.TextField(blank=True, null=True)
 	foto = models.ImageField(null=True, blank=True, upload_to='images/pistas/%Y-%m-%d/', verbose_name=_('Foto de pista'))
+	visible = models.BooleanField(default=True)
 
 	#atributos derivados de valoraciones
 	estado = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(0), MaxValueValidator(5)], null=True, blank=True)
