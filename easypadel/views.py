@@ -632,7 +632,7 @@ def createPropuesta(request):
                 new_propuesta.creador = Jugador.objects.get(user = request.user)
                 new_propuesta.fecha_publicacion = fecha_publicacion
                 new_propuesta.save()    
-                return HttpResponseRedirect(reverse('listPropuestas', kwargs={'username':request.user.username}))
+                return HttpResponseRedirect(reverse('listPropuestas'))
             else:
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Las fechas no son correctas'])
@@ -650,10 +650,6 @@ def validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
     return valido
 
 
-'''def listPropuestasCreadas(request, username):
-    jugador = Jugador.objects.get(user = request.user)
-    propuestas_creadas = Propuesta.objects.filter(creador = jugador)
-    return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})'''
 
 @login_required
 def listPropuestas(request):
@@ -664,6 +660,7 @@ def listPropuestas(request):
             fecha_inicio = formPartidos.cleaned_data['fecha_inicio']
             fecha_fin = formPartidos.cleaned_data['fecha_fin']
             lugar = formPartidos.cleaned_data['lugar']
+            tipo_partido = formPartidos.cleaned_data['tipo_partido']
     else:
         formPartidos = FiltroPartidosForm()
 
@@ -672,18 +669,21 @@ def listPropuestas(request):
         formPartidos.fecha_inicio = fecha_inicio
         formPartidos.fecha_fin = fecha_fin
         lugar = ''
+        tipo_partido = ''
 
     jugador = Jugador.objects.get(user = request.user)
     propuestas = []
-    propuestas_creadas = Propuesta.objects.filter(creador = jugador, fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar)
+    propuestas_creadas = Propuesta.objects.filter(creador = jugador, fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar, tipo_partido__icontains = tipo_partido)
+    print(propuestas_creadas)
     propuestas_participaciones = Participante.objects.filter(jugador = jugador)
 
     for p in propuestas_creadas:
         propuestas.append(p)
     for p in propuestas_participaciones:
         f_limite_propuesta = p.propuesta.fecha_limite.replace(tzinfo=None)
-        if f_limite_propuesta.date() > fecha_inicio and f_limite_propuesta.date() < fecha_fin and lugar in p.propuesta.sitio:
-            propuestas.append(p.propuesta)
+        if f_limite_propuesta.date() > fecha_inicio and f_limite_propuesta.date() < fecha_fin and lugar in p.propuesta.sitio and p.propuesta.tipo_partido == tipo_partido:
+            if tipo_partido == '' or (tipo_partido != '' and p.propuesta.tipo_partido == tipo_partido):
+                propuestas.append(p.propuesta)
 
     propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
     return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':True, 'formPartidos':formPartidos})
@@ -699,24 +699,29 @@ def listPropuestasAbiertas(request):
             fecha_inicio = formPartidos.cleaned_data['fecha_inicio']
             fecha_fin = formPartidos.cleaned_data['fecha_fin']
             lugar = formPartidos.cleaned_data['lugar']
+            tipo_partido = formPartidos.cleaned_data['tipo_partido']
     else:
         formPartidos = FiltroPartidosForm()
 
         fecha_inicio = datetime.now()
-        fecha_fin = fecha_inicio + timedelta(days=7)
+        fecha_fin = fecha_inicio + timedelta(days=6)
         formPartidos.fecha_inicio = fecha_inicio
         formPartidos.fecha_fin = fecha_fin
         lugar = ''
-
+        tipo_partido = ''
 
 
     propuestas = []
-    propuestas_consulta = Propuesta.objects.filter(fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar).order_by('fecha_partido')
+    propuestas_consulta = Propuesta.objects.filter(fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar, tipo_partido__icontains = tipo_partido).order_by('fecha_partido')
     for p in propuestas_consulta:
         if p.participante_set.count() < 3:
             propuestas.append(p)
 
     return render(request, 'listPropuestas.html', {'list':propuestas, 'creador':False, 'formPartidos':formPartidos})
+
+
+
+
 
 @user_passes_test(jugadores_group)
 def deletePropuesta(request, propuesta_id):
@@ -728,7 +733,7 @@ def deletePropuesta(request, propuesta_id):
         propuesta.delete()
     else:
         raise Http404("No tiene permiso para eliminar esta propuesta.")
-    return listPropuestas(request, request.user.username)
+    return listPropuestas(request)
 
 
 @login_required

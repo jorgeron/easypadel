@@ -209,9 +209,17 @@ class BuscarUsuariosForm(forms.Form):
 
 
 class FiltroPartidosForm(forms.Form):
+    TIPOS_PARTIDO = (
+        ('', '---------'),
+        ('MASCULINO', 'Masculino'),
+        ('FEMENINO', 'Femenino'),
+        ('MIXTO', 'Mixto')
+        )
+
     hoy = datetime.now().date()
     hoy_mas_7_dias = hoy + timedelta(days=7)
 
     fecha_inicio = forms.DateField(initial=hoy, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
     fecha_fin = forms.DateField(initial=hoy_mas_7_dias, widget=DateWidget(usel10n=True, bootstrap_version=3, attrs={'class':'datepicker'}))
     lugar = forms.CharField(required=False, widget=forms.TextInput(attrs={'max_length':20, 'placeholder':'Lugar (opcional)'}))
+    tipo_partido = forms.ChoiceField(choices = TIPOS_PARTIDO, required=False)
