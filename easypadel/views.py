@@ -656,19 +656,39 @@ def validaFechas(fecha_publicacion, fecha_limite, fecha_partido):
     return render(request, 'listPropuestas.html', {'list':propuestas_creadas, 'creador':True})'''
 
 @login_required
-def listPropuestas(request, username):
+def listPropuestas(request):
+
+    if request.method == 'POST':
+        formPartidos = FiltroPartidosForm(request.POST)
+        if formPartidos.is_valid():
+            fecha_inicio = formPartidos.cleaned_data['fecha_inicio']
+            fecha_fin = formPartidos.cleaned_data['fecha_fin']
+            lugar = formPartidos.cleaned_data['lugar']
+    else:
+        formPartidos = FiltroPartidosForm()
+
+        fecha_inicio = datetime.now().date()
+        fecha_fin = fecha_inicio + timedelta(days=7)
+        formPartidos.fecha_inicio = fecha_inicio
+        formPartidos.fecha_fin = fecha_fin
+        lugar = ''
+
     jugador = Jugador.objects.get(user = request.user)
     propuestas = []
-    propuestas_creadas = Propuesta.objects.filter(creador = jugador)
+    propuestas_creadas = Propuesta.objects.filter(creador = jugador, fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar)
     propuestas_participaciones = Participante.objects.filter(jugador = jugador)
 
     for p in propuestas_creadas:
         propuestas.append(p)
     for p in propuestas_participaciones:
-        propuestas.append(p.propuesta)
+        f_limite_propuesta = p.propuesta.fecha_limite.replace(tzinfo=None)
+        if f_limite_propuesta.date() > fecha_inicio and f_limite_propuesta.date() < fecha_fin and lugar in p.propuesta.sitio:
+            propuestas.append(p.propuesta)
 
     propuestas_ordenadas = sorted(propuestas, key=lambda propuesta: propuesta.fecha_partido)
-    return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':True})
+    return render(request, 'listPropuestas.html', {'list':propuestas_ordenadas, 'creador':True, 'formPartidos':formPartidos})
+
+
 
 @login_required
 def listPropuestasAbiertas(request):
@@ -686,7 +706,6 @@ def listPropuestasAbiertas(request):
         fecha_fin = fecha_inicio + timedelta(days=7)
         formPartidos.fecha_inicio = fecha_inicio
         formPartidos.fecha_fin = fecha_fin
-
         lugar = ''
 
 
