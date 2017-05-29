@@ -242,8 +242,13 @@ def editPista(request, pista_id):
 @user_passes_test(empresas_group)
 def deletePista(request, pista_id):
     pista = Pista.objects.get(pk = pista_id)
-    pista.delete()
-    return listPistas(request, request.user.id)
+    if pista.empresa.user == request.user and not tieneReservasFuturas(pista):
+        pista.delete()
+        return listPistas(request, request.user.id)
+    else:
+        raise Http404("No puede eliminar esta pista")
+
+
 
 @user_passes_test(empresas_group)
 def createPista(request):
