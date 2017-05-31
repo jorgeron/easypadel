@@ -325,8 +325,8 @@ def viewHorario(request, horario_id):
 def deleteHorario(request, horario_id):
     franjas_horarias = FranjaHoraria.objects.filter(horario__id = horario_id)
     for f in franjas_horarias:
-        if f.dia_asignacion:
-            f.dia_asignacion.delete()
+        if not f.asignada:
+            f.delete()
 
     horario = Horario.objects.get(pk = horario_id)
     horario.delete()
