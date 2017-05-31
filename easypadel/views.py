@@ -1023,6 +1023,7 @@ def createResultado(request, franjaHoraria_id):
             new_resultado.pareja2set3 = request.POST.get('pareja2set3')
 
         determinarResultadoFinal(new_resultado)
+        actualizarPartidosJugadores(new_resultado)
         new_resultado.save()
 
         return HttpResponseRedirect(reverse('viewHorarioPista', kwargs={'pista_id':franja_horaria.dia_asignacion.pista.id}))
@@ -1058,3 +1059,36 @@ def determinarResultadoFinal(resultado):
 
     return resultado
 
+
+def actualizarPartidosJugadores(resultado):
+    jugador1 = resultado.jugador1
+    jugador2 = resultado.jugador2
+    jugador3 = resultado.jugador3
+    jugador4 = resultado.jugador4
+
+    #partidos jugados
+    jugador1.partidos_jugados += 1
+    jugador2.partidos_jugados += 1
+    jugador3.partidos_jugados += 1
+    jugador4.partidos_jugados += 1
+
+    #victorias
+    if resultado.pareja1totalSets > resultado.pareja2totalSets:
+        jugador1.partidos_ganados += 1
+        jugador2.partidos_ganados += 1
+    else:
+        jugador3.partidos_ganados += 1
+        jugador4.partidos_ganados += 1
+
+
+    #rating victorias
+    jugador1.rating_victorias = (jugador1.partidos_ganados/jugador1.partidos_jugados)*100
+    jugador2.rating_victorias = (jugador2.partidos_ganados/jugador2.partidos_jugados)*100
+    jugador3.rating_victorias = (jugador3.partidos_ganados/jugador3.partidos_jugados)*100
+    jugador4.rating_victorias = (jugador4.partidos_ganados/jugador4.partidos_jugados)*100
+
+    jugador1.save()
+    jugador2.save()
+    jugador3.save()
+    jugador4.save()
+    return True
