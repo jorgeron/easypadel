@@ -29,7 +29,7 @@ from easypadel.decorators import anonymous_required, admin_group, jugadores_grou
 from easypadel.forms import JugadorForm, AdminForm, EmpresaForm, PistaForm, HorarioForm, FranjaHorariaFormSet, DiaAsignacionHorarioForm, FiltroFechasHorariosForm, JugadorProfileForm, EmpresaProfileForm, ProfileForm, PostForm, PropuestaForm, ComentarioForm, ValoracionForm, ValoracionEmpresaForm, ValoracionJugadorForm, ValoracionPistaForm, FiltroPartidosForm
 from django.forms import inlineformset_factory
 
-from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Administrador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista
+from easypadel.models import Pista, Empresa, Horario, FranjaHoraria, DiaAsignacionHorario, Jugador, Administrador, Post, Seguimiento, Propuesta, Participante, Comentario, Valoracion, ValoracionEmpresa, ValoracionJugador, ValoracionPista, Resultado
 
 
 def get_user_actor(user):
@@ -995,3 +995,66 @@ def buscarUsuarios(request):
                 if empresas_group(u) or jugadores_group(u):
                     lista.append(get_user_actor(u))
     return render(request, 'listUsers.html', {'list':lista})
+
+
+@user_passes_test(empresas_group)
+def createResultado(request, franjaHoraria_id):
+    franja_horaria = FranjaHoraria.objects.get(pk = franjaHoraria_id)
+
+    if request.method=='POST':
+
+        new_resultado = Resultado()
+        new_resultado.franja_horaria = franja_horaria
+        new_resultado.empresa = franja_horaria.horario.empresa
+        new_resultado.fecha_partido = datetime.combine(franja_horaria.dia_asignacion.dia, franja_horaria.hora_inicio)
+
+        new_resultado.jugador1 = Jugador.objects.get(user = User.objects.get(username = request.POST.get('jugador1')))
+        new_resultado.jugador2 = Jugador.objects.get(user = User.objects.get(username = request.POST.get('jugador2')))
+        new_resultado.jugador3 = Jugador.objects.get(user = User.objects.get(username = request.POST.get('jugador3')))
+        new_resultado.jugador4 = Jugador.objects.get(user = User.objects.get(username = request.POST.get('jugador4')))
+
+        new_resultado.pareja1set1 = request.POST.get('pareja1set1')
+        new_resultado.pareja2set1 = request.POST.get('pareja2set1')
+        new_resultado.pareja1set2 = request.POST.get('pareja1set2')
+        new_resultado.pareja2set2 = request.POST.get('pareja2set2')
+
+        if request.POST.get('pareja1set3') and request.POST.get('pareja2set3'):
+            new_resultado.pareja1set3 = request.POST.get('pareja1set3')
+            new_resultado.pareja2set3 = request.POST.get('pareja2set3')
+
+        determinarResultadoFinal(new_resultado)
+        new_resultado.save()
+
+        return HttpResponseRedirect(reverse('viewHorarioPista', kwargs={'pista_id':franja_horaria.dia_asignacion.pista.id}))
+    else:
+        jugadores = Jugador.objects.all()
+    return render(request, 'formResultado.html', {'jugadores':jugadores, 'franja_horaria':franja_horaria})
+
+
+def determinarResultadoFinal(resultado):
+    pareja1totalSets = 0
+    pareja2totalSets = 0
+
+    if resultado.pareja1set1 > resultado.pareja2set1:
+        pareja1totalSets += 1
+    else:
+        pareja2totalSets += 1
+
+
+    if resultado.pareja1set2 > resultado.pareja2set2:
+        pareja1totalSets += 1
+    else:
+        pareja2totalSets += 1
+
+
+    if resultado.pareja1set3 and resultado.pareja2set3:
+        if resultado.pareja1set3 > resultado.pareja2set3:
+            pareja1totalSets += 1
+        else:
+            pareja2totalSets += 1
+
+    resultado.pareja1totalSets = pareja1totalSets
+    resultado.pareja2totalSets = pareja2totalSets
+
+    return resultado
+

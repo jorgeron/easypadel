@@ -5,6 +5,7 @@
 {% load thumbnail %}
 {% load groups %}
 {% load static %}
+{% load resultadotools %}
 
 {% block head %}{{ formFechas.media }}{% endblock %}
 {% block pagetitle %} Horario {{pista.nombre}}{% endblock %}
@@ -66,9 +67,15 @@
                         <h4>{% bootstrap_icon "ok" %} </h4>
                         {% endif %}
                       {% else %} 
-                        {% if franjaHoraria.jugador %}<h4 style="margin-top: 7px;margin-bottom: 6px;"><a href="{% url 'viewPerfil' franjaHoraria.jugador.user.username %}">
-                        <img class="img-circle" src="{%thumbnail franjaHoraria.jugador.foto_perfil|default:'default_profile.png' 25x25 crop %}" alt="@{{franjaHoraria.jugador.user.username}}">
-                        @{{franjaHoraria.jugador.user.username}}</a></h4>
+                        {% if franjaHoraria.jugador %}
+
+                          {% if request.user|has_group:"Empresas" and request.user == franjaHoraria.horario.empresa.user and franjaHoraria.finalizada and not franjaHoraria|tiene_resultado %}
+                            <a href="{% url 'createResultado' franjaHoraria.id %}" class="btn btn-warning" >Determinar resultado </button></a>
+                          {% endif %}
+
+                          <h4 style="margin-top: 7px;margin-bottom: 6px;"><a href="{% url 'viewPerfil' franjaHoraria.jugador.user.username %}">
+                          <img class="img-circle" src="{%thumbnail franjaHoraria.jugador.foto_perfil|default:'default_profile.png' 25x25 crop %}" alt="@{{franjaHoraria.jugador.user.username}}">
+                          @{{franjaHoraria.jugador.user.username}}</a></h4>
                         {% else %}
                         <h4 style="color:red;">{% bootstrap_icon "remove" %}</h4>
                         {% endif %}

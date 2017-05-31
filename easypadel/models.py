@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django import forms
 from embed_video.fields import EmbedVideoField
-
+from datetime import datetime
 
 # Create your models here.
 class Actor(models.Model):
@@ -137,6 +137,11 @@ class FranjaHoraria(models.Model):
 	disponible = models.BooleanField(default=True)
 	asignada = models.BooleanField(default=False)
 
+	@property
+	def finalizada(self):
+		fecha_fin_partido = datetime.combine(self.dia_asignacion.dia, self.hora_fin)
+		return datetime.now() > fecha_fin_partido
+
 
 class Post(models.Model):
 	user = models.ForeignKey(User)
@@ -251,7 +256,33 @@ class ValoracionPista(Valoracion):
 
 
 
+class Resultado(models.Model):
+	jugador1 = models.ForeignKey(Jugador, related_name='jugador1')
+	jugador2 = models.ForeignKey(Jugador, related_name='jugador2')
 
+	jugador3 = models.ForeignKey(Jugador, related_name='jugador3')
+	jugador4 = models.ForeignKey(Jugador, related_name='jugador4')
+
+	empresa = models.ForeignKey(Empresa, related_name='empresa')
+	franja_horaria = models.ForeignKey(FranjaHoraria)
+
+	pareja1set1 = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(7)])
+	pareja2set1 = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(7)])
+	
+	pareja1set2 = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(7)])
+	pareja2set2 = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(7)])
+	
+	pareja1set3 = models.DecimalField(max_digits=1, decimal_places=0, blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(7)])
+	pareja2set3 = models.DecimalField(max_digits=1, decimal_places=0, blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(7)])
+
+	pareja1totalSets = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(2)])
+	pareja2totalSets = models.DecimalField(max_digits=1, decimal_places=0, validators=[MinValueValidator(0), MaxValueValidator(2)])
+
+	fecha_partido = models.DateTimeField(auto_now=False)
+
+	class Meta:
+		verbose_name='Resultado'
+		verbose_name_plural='Resultados'
 
 
 

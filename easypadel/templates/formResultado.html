@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% block pagetitle %}Determinar resultado{% endblock %}
+{% block pageheader %}
+	<h1>Determinar resultado</h1>
+{% endblock %}
+{% block pagebody %}
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+	<div class="col-md-8 col-sm-12 col-xs-12 text-center">
+
+	<div class="panel panel-default">
+	<div class="panel-body">
+		<form id='resultadoForm' enctype="multipart/form-data" method='post' action='{% url 'createResultado' franja_horaria.id %}'>{% csrf_token %}
+
+			<div class="col-md-4 col-sm-12 col-xs-12 ">
+				
+				<h3>Pareja 1</h3>
+
+				<div class="form-group">
+					<label for="j1">Jugador 1:</label>
+					  <select class="form-control" id="jugador1" name="jugador1" required="required">
+					  {% for j in jugadores %}
+					    <option>{{j.user.username}}</option>
+					  {% endfor %}
+					  </select>
+				</div>
+
+				<div class="form-group">
+					<label for="j2">Jugador 2:</label>
+					  <select class="form-control" id="jugador2" name="jugador2" required="required">
+					    {% for j in jugadores %}
+						   <option>{{j.user.username}}</option>
+						 {% endfor %}
+					  </select>
+				</div>
+			</div>
+
+
+
+			<div class="col-md-4 col-sm-12 col-xs-12">
+				<h4>Resultados</h4>
+
+				<div class="form-group">
+					<p>Set 1</p>
+					<input type="number" name="pareja1set1" required="required" min="0" max="7"> - <input type="number" name="pareja2set1" required="required" min="0" max="7">
+				</div>
+
+				<div class="form-group">
+					<p>Set 2</p>
+					<input type="number" name="pareja1set2" required="required" min="0" max="7"> - <input type="number" name="pareja2set2" required="required" min="0" max="7">
+				</div>
+
+				<div class="form-group">
+					<p>Set 3 (opcional)</p>
+					<input type="number" name="pareja1set3" min="0" max="7"> - <input type="number" name="pareja2set3" min="0" max="7">
+				</div>
+
+				{% buttons %}
+				<button type="submit" class="btn btn-primary">
+				{% bootstrap_icon "ok" %} Enviar
+				</button>
+				<button class="btn btn-danger" onClick="window.history.back();return false;">
+				{% bootstrap_icon "chevron-left" %} Cancelar
+				</button>
+				{% endbuttons %}
+			</div>
+
+
+
+			<div class="col-md-4 col-sm-12 col-xs-12">
+				<h3>Pareja 2</h3>
+
+				<div class="form-group">
+					<label for="j3">Jugador 3:</label>
+					  <select class="form-control" id="jugador3" name="jugador3" required="required">
+					  {% for j in jugadores %}
+					    <option>{{j.user.username}}</option>
+					  {% endfor %}
+					  </select>
+				</div>
+
+				<div class="form-group">
+					<label for="j4">Jugador 4:</label>
+					  <select class="form-control" id="jugador4" name="jugador4" required="required">
+					    {% for j in jugadores %}
+						   <option>{{j.user.username}}</option>
+						 {% endfor %}
+					  </select>
+				</div>
+			</div>
+
+		</form>
+
+	</div>
+	</div>
+	</div>
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+{% endblock %}
