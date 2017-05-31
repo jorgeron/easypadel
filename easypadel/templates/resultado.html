@@ -1,0 +1,67 @@
+{%load thumbnail %}
+{%load bootstrap3%}
+{% load humanize %}
+{% load groups %}
+
+<div class="panel panel-default">
+<div class="panel-heading">
+
+<h4>Lugar: <a href="{% url 'viewPerfil' resultado.empresa.user.username %}">{{resultado.empresa.nombre}}</a></h4>
+<h4>Fecha: {{resultado.fecha_partido}}</h4>
+
+</div>
+<div class="panel-body">
+
+<div class="row">
+
+	<div class="col-md-4 col-sm-12 col-xs-12 text-center">
+		<h3>Pareja 1</h3>
+
+		<h3>
+		<a href="{% url 'viewPerfil' resultado.jugador1.user.username %}"><img class="img-circle" src="{% thumbnail resultado.jugador1.foto_perfil|default:'default_profile.png' 50x50 crop %}" alt=""> @{{resultado.jugador1.user.username}}</a>
+		</h3>
+
+		<h3>
+		<a href="{% url 'viewPerfil' resultado.jugador2.user.username %}"><img class="img-circle" src="{% thumbnail resultado.jugador2.foto_perfil|default:'default_profile.png' 50x50 crop %}" alt=""> @{{resultado.jugador2.user.username}}</a>
+		</h3>
+	</div>
+
+	<div class="col-md-4 col-sm-12 col-xs-12 text-center">
+		<h4>Resultados</h4>
+
+		<div>
+		<p>Set 1</p>
+		<strong>{{resultado.pareja1set1}} - {{resultado.pareja2set1}}</strong></div>
+		<hr class ="divider">
+
+		<div>
+		<p>Set 2</p>
+		<strong>{{resultado.pareja1set2}} - {{resultado.pareja2set2}}</strong></div>
+		<hr class ="divider">
+
+		{% if resultado.pareja1set3 and resultado.pareja2set3 %}
+		<div>
+		<p>Set 3</p>
+		<strong>{{resultado.pareja1set3}} - {{resultado.pareja2set3}}</strong></div>
+		<hr class ="divider">
+		{% endif %}
+
+		<h1>{{resultado.pareja1totalSets}} - {{resultado.pareja2totalSets}}</h1>
+	</div>
+
+	<div class="col-md-4 col-sm-12 col-xs-12 text-center">
+
+		<h3>Pareja 2</h3>
+
+		<h3>
+		<a href="{% url 'viewPerfil' resultado.jugador3.user.username %}"><img class="img-circle" src="{% thumbnail resultado.jugador3.foto_perfil|default:'default_profile.png' 50x50 crop %}" alt=""> @{{resultado.jugador3.user.username}}</a>
+		</h3>
+
+		<h3>
+		<a href="{% url 'viewPerfil' resultado.jugador4.user.username %}"><img class="img-circle" src="{% thumbnail resultado.jugador4.foto_perfil|default:'default_profile.png' 50x50 crop %}" alt=""> @{{resultado.jugador4.user.username}}</a>
+		</h3>
+	</div>
+</div>
+
+</div>
+</div>

@@ -1092,3 +1092,12 @@ def actualizarPartidosJugadores(resultado):
     jugador3.save()
     jugador4.save()
     return True
+
+
+@login_required
+def listResultadosJugador(request, username):
+    jugador = Jugador.objects.get(user = (User.objects.get(username = username)))
+
+    resultados = get_page(request, Resultado.objects.filter(Q(jugador1 = jugador) | Q(jugador2 = jugador) | Q(jugador3 = jugador) | Q(jugador4 = jugador)).distinct().order_by('-fecha_partido'))
+
+    return render(request, 'listResultados.html', {'resultados':resultados})

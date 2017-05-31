@@ -4,6 +4,9 @@
 {% load groups %}
 {% load mathtools %}
 
+
+<div class="panel panel-default">
+<div class="panel-body">
 <h3 class="title">
 	<a href="{% url 'viewPerfil' valoracion.emisor.username %}"><img class="img-circle" src="{% if valoracion.emisor.empresa%} {%thumbnail valoracion.emisor.empresa.foto_perfil|default:'default_profile.png' 24x24 crop %}{%elif valoracion.emisor.jugador%}{%thumbnail valoracion.emisor.jugador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%else%}{%thumbnail valoracion.emisor.administrador.foto_perfil|default:'default_profile.png' 24x24 crop %}{%endif%}" alt=""> @{{valoracion.emisor.username}}</a>
 	
@@ -85,4 +88,6 @@
 	{% endif %}
 	</div>
 </div>
-<hr class ="divider">
+
+</div>
+</div>

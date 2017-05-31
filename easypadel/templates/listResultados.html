@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% load resultadotools %}
+{% load thumbnail %}
+
+{% block pagetitle %} Resultados {% endblock %} 
+{% block pageheader %}
+	<h1>Resultados</h1>
+ {% endblock %} 
+
+{% block pagebody %}
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+<div class="col-md-8 col-sm-12 col-xs-12">
+
+	{% for resultado in resultados %}
+		{% resultadoview resultado %}
+	{% endfor %}
+
+	{% if resultados %}
+		{% bootstrap_pagination resultados %}
+	{% endif %}
+
+	<div>
+	<button class="btn btn-danger" onClick="window.history.back();return false;">
+		{% bootstrap_icon "chevron-left" %} Volver
+	</button>
+	</div>
+</div>
+<div class="col-md-2 col-sm-12 col-xs-12"></div>
+
+{% endblock %}

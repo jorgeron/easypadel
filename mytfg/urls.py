@@ -77,6 +77,7 @@ urlpatterns = [
     url(r'^propuesta/comentario/delete/(?P<comentario_id>[0-9]+)/$', easypadel.views.deleteComentario, name="deleteComentario"),
 
     url(r'^resultado/create/(?P<franjaHoraria_id>[0-9]+)/$', easypadel.views.createResultado, name="createResultado"),
+    url(r'^resultado/list/(?P<username>[\w\-]+)$', easypadel.views.listResultadosJugador, name="listResultadosJugador"),
 
     url(r'^admin/', admin.site.urls),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
