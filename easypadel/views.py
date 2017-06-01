@@ -679,7 +679,7 @@ def listPropuestas(request):
     jugador = Jugador.objects.get(user = request.user)
     propuestas = []
     propuestas_creadas = Propuesta.objects.filter(creador = jugador, fecha_limite__gte=fecha_inicio, fecha_limite__lte=fecha_fin, sitio__icontains = lugar, tipo_partido__icontains = tipo_partido)
-    print(propuestas_creadas)
+
     propuestas_participaciones = Participante.objects.filter(jugador = jugador)
 
     for p in propuestas_creadas:

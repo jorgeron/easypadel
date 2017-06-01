@@ -70,7 +70,7 @@
                         {% if franjaHoraria.jugador %}
 
                           {% if request.user|has_group:"Empresas" and request.user == franjaHoraria.horario.empresa.user and franjaHoraria.finalizada and not franjaHoraria|tiene_resultado %}
-                            <a href="{% url 'createResultado' franjaHoraria.id %}" class="btn btn-warning" >Determinar resultado </button></a>
+                            <a href="{% url 'createResultado' franjaHoraria.id %}" class="btn btn-sm btn-warning" >Determinar resultado </button></a>
                           {% endif %}
 
                           <h4 style="margin-top: 7px;margin-bottom: 6px;"><a href="{% url 'viewPerfil' franjaHoraria.jugador.user.username %}">
